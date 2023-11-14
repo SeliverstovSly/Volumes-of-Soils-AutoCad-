@@ -959,7 +959,7 @@ namespace ACADprogram
                 }
             },
         };
-        
+
     }
 
     public class FoundationName
@@ -1322,12 +1322,6 @@ namespace ACADprogram
 
             Fund_Type4.TransformBy(Matrix3d.Displacement(vector_ponizh));
             return Fund_Type4;
-            
-            
         }
-
-
-
     }
-
 }

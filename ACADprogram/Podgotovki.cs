@@ -13,26 +13,26 @@ namespace ACADprogram
             if (Context.HShebenPodgotovki == 0) return false;
             solid = new Solid3d();
             //свесы подготовки
-            var svesupod = 300;
-            var svesupodBeton = 300;
+            var svesupod = Context.SvesaShebenPod;
+            var svesupodBeton = Context.SvesaBetonPod;
             if (Context.HBetonPodgotovki==0)
             {
                 svesupodBeton = 0;
             }
-            var Lp1y = Foundation.AllFoundations[FoundationTypei].b + svesupod + svesupodBeton;
+            var Lp1y = Foundation.AllFoundations[FoundationTypei].b + 2*svesupod + 2*svesupodBeton;
             if (FoundationTypei == FoundationType.FS1n_A || FoundationTypei == FoundationType.FSP1n_A)
             {
-               Lp1y = 4200 + svesupod + svesupodBeton;
+                Lp1y = 4200 + 2 * svesupod + 2 * svesupodBeton;
             }
             else if (FoundationTypei == FoundationType.FS2n_A || FoundationTypei == FoundationType.FSP2n_A)
             {
-                Lp1y = 5200 + svesupod + svesupodBeton;
+                Lp1y = 5200 + 2 * svesupod + 2 * svesupodBeton;
             }
             else
             {
-                Lp1y = Foundation.AllFoundations[FoundationTypei].b + svesupod + svesupodBeton;
+                Lp1y = Foundation.AllFoundations[FoundationTypei].b + 2 * svesupod + 2 * svesupodBeton;
             }
-            var Lp1x = Foundation.AllFoundations[FoundationTypei].a + svesupod + svesupodBeton;
+            var Lp1x = Foundation.AllFoundations[FoundationTypei].a + 2 * svesupod + 2 * svesupodBeton;
             var hpodg = Context.HShebenPodgotovki;
             var ip = 1;
             if (hpodg <= 100)
@@ -80,21 +80,21 @@ namespace ACADprogram
             solid = null;
             if (Context.HBetonPodgotovki == 0) return false;
             solid = new Solid3d();
-            var svesupodBeton = 300;
-            var Lp1y = Foundation.AllFoundations[FoundationTypei].b + svesupodBeton;
+            var svesupodBeton = Context.SvesaBetonPod;
+            var Lp1y = Foundation.AllFoundations[FoundationTypei].b + 2 * svesupodBeton;
             if (FoundationTypei == FoundationType.FS1n_A || FoundationTypei == FoundationType.FSP1n_A)
             {
-                Lp1y = 4200 + svesupodBeton;
+                Lp1y = 4200 + 2 * svesupodBeton;
             }
             else if (FoundationTypei == FoundationType.FS2n_A || FoundationTypei == FoundationType.FSP2n_A)
             {
-                Lp1y = 5200 + svesupodBeton;
+                Lp1y = 5200 + 2 * svesupodBeton;
             }
             else
             {
-                Lp1y = Foundation.AllFoundations[FoundationTypei].b + svesupodBeton;
+                Lp1y = Foundation.AllFoundations[FoundationTypei].b + 2 * svesupodBeton;
             }
-            var Lp1x = Foundation.AllFoundations[FoundationTypei].a + svesupodBeton;
+            var Lp1x = Foundation.AllFoundations[FoundationTypei].a + 2 * svesupodBeton;
             var hpodg = Context.HBetonPodgotovki;
             var ip = 0;
             var Lp2x = Lp1x + 2 * ip * Context.HBetonPodgotovki;

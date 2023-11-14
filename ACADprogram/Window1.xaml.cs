@@ -40,17 +40,23 @@ namespace ACADprogram
         public int IGE6 { get; set; } = 0;
         public int OtmetkaPonizh { get; set; } = 0;
         public int HShebenPodgotovki { get; set; } = 500;
-        public int HBetonPodgotovki { get; set; } = 0;
-              
+        public int HBetonPodgotovki { get; set; } = 200;
+        public int SvesaBetonPod { get; set; } = 150;
+        public int SvesaShebenPod { get; set; } = 150;
+
         public FoundationType SelectedType1 { get; set; } = FoundationType.F2n_2;
         public FoundationType SelectedType2 { get; set; } = FoundationType.F3n_2;
         public FoundationType SelectedType3 { get; set; } = FoundationType.F1n_2;
         public FoundationType SelectedType4 { get; set; } = FoundationType.FS1n_2;
+        public OporaType SelectedType { get; set; } = OporaType.U500n_1_12;
 
         public ObservableCollection<VolumeInfo> Volumes { get; set; } = new ObservableCollection<VolumeInfo>();
         public ObservableCollection<VolumeInfo> VolumesSR { get; set; } = new ObservableCollection<VolumeInfo>();
         public double VolumesN { get; set; }=new double();
         public double SQN { get; set; } = new double();
+        public double VolumeShebenPodg { get; set; } = new double();
+        public double VolumeBetonPodg { get; set; } = new double();
+
 
         public string ExceptionMessage { get; set; }
         public Dispatcher AutocadDispatcher;
