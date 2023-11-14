@@ -43,6 +43,7 @@ namespace ACADprogram
         public int HBetonPodgotovki { get; set; } = 200;
         public int SvesaBetonPod { get; set; } = 150;
         public int SvesaShebenPod { get; set; } = 150;
+        public int DopRazmerNizhaKotlovana { get; set; } = 0;
 
         public FoundationType SelectedType1 { get; set; } = FoundationType.F2n_2;
         public FoundationType SelectedType2 { get; set; } = FoundationType.F3n_2;

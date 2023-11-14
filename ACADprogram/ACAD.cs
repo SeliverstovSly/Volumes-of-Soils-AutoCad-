@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Threading;
 using AcadApp = Autodesk.AutoCAD.ApplicationServices.Application;
@@ -62,26 +63,9 @@ namespace ACADprogram
             //Открытие пространство модели таблицы блоков для записи.
             using (var PdBlkRec = PdTrans.GetObject(PdBlk[BlockTableRecord.ModelSpace], OpenMode.ForWrite) as BlockTableRecord)
             {
+                //Определение размеров дна котлована взависимости от типа опоры и типа фундамента
 
-                
-                    //Определение размеров дна котлована взависимости от типа опоры и типа фундамента
-                    var F1a = Foundation.AllFoundations[Context.SelectedType1].a;
-                    var F1b = Foundation.AllFoundations[Context.SelectedType1].b;
-                    var F1e = Foundation.AllFoundations[Context.SelectedType1].e;
-                    var F1Ug = Foundation.AllFoundations[Context.SelectedType1].Ugol_povorota;
-                    var F2a = Foundation.AllFoundations[Context.SelectedType2].a;
-                    var F2b = Foundation.AllFoundations[Context.SelectedType2].b;
-                    var F2e = Foundation.AllFoundations[Context.SelectedType2].e;
-                    var F2Ug = Foundation.AllFoundations[Context.SelectedType2].Ugol_povorota;
-                    var F3a = Foundation.AllFoundations[Context.SelectedType3].a;
-                    var F3b = Foundation.AllFoundations[Context.SelectedType3].b;
-                    var F3e = Foundation.AllFoundations[Context.SelectedType3].e;
-                    var F3Ug = Foundation.AllFoundations[Context.SelectedType3].Ugol_povorota;
-                    var F4a = Foundation.AllFoundations[Context.SelectedType4].a;
-                    var F4b = Foundation.AllFoundations[Context.SelectedType4].b;
-                    var F4e = Foundation.AllFoundations[Context.SelectedType4].e;
-                    var F4Ug = Foundation.AllFoundations[Context.SelectedType4].Ugol_povorota;
-                    double UgolProekc = 0;
+                double UgolProekc;
                 double[] Lk_dopA;
                 Lk_dopA = new double[4]
                 {
@@ -99,31 +83,32 @@ namespace ACADprogram
                     new double()
                 };
                 FoundationType[] typei = new FoundationType[] { Context.SelectedType1, Context.SelectedType2, Context.SelectedType3, Context.SelectedType4 };
-                
-                    foreach (var e in typei) 
-                    { 
-                        if (e == FoundationType.FS1n_A || e == FoundationType.FSP1n_A)
-                        {
-                            Foundation.AllFoundations[e].b = 4200;
-                            UgolProekc = 9.4623 * Math.PI / 180;
-                        }
-                        else if (e == FoundationType.FS2n_A || e == FoundationType.FSP2n_A)
-                        {
-                            Foundation.AllFoundations[e].b = 5200;
-                            UgolProekc = 15.0202 * Math.PI / 180;
-                        }
-                        else
-                        {
-                            F1b = Foundation.AllFoundations[e].b;
-                            UgolProekc = 0; 
-                        }
+
+                foreach (var e in typei)
+                {
+                    if (e == FoundationType.FS1n_A || e == FoundationType.FSP1n_A)
+                    {
+                        Foundation.AllFoundations[e].b = 4200;
+                        UgolProekc = 9.4623 * Math.PI / 180;
+                    }
+                    else if (e == FoundationType.FS2n_A || e == FoundationType.FSP2n_A)
+                    {
+                        Foundation.AllFoundations[e].b = 5200;
+                        UgolProekc = 15.0202 * Math.PI / 180;
+                    }
+                    else
+                    {
+                        
+                        UgolProekc = 0 * Math.PI / 180;
+                    }
                     int Index = Array.IndexOf(typei, e);
-                    Lk_dopA[Index] = Foundation.AllFoundations[e].a * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1;
-                    Lk_dopB[Index] = Foundation.AllFoundations[e].b * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1;
+                    Lk_dopA[Index] = Foundation.AllFoundations[e].a * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
+                    Lk_dopB[Index] = Foundation.AllFoundations[e].b * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
                     if (Foundation.AllFoundations[e].Ugol_povorota > 0)
                     {
-                        Lk_dopA[Index] = 0.5 * Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].a, 2) + Math.Pow(Foundation.AllFoundations[e].b, 2)) * Math.Cos(UgolProekc) + 0.5 * Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].e, 2)) + Context.SvesaBetonPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota) + Context.SvesaShebenPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota) + Context.HShebenPodgotovki * 1 / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota);
-                        Lk_dopB[Index] = 0.5 * Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].a, 2) + Math.Pow(Foundation.AllFoundations[e].b, 2)) * Math.Cos(UgolProekc) + 0.5 * Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].e, 2)) + Context.SvesaBetonPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota) + Context.SvesaShebenPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota) + Context.HShebenPodgotovki * 1 / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota);
+                        Lk_dopA[Index] = 0.5 * Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].a, 2) + Math.Pow(Foundation.AllFoundations[e].b, 2)) * Math.Cos(UgolProekc) + Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].e, 2) * 0.5) + Context.SvesaBetonPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.SvesaShebenPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.HShebenPodgotovki * 1 / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.DopRazmerNizhaKotlovana;
+                        Lk_dopB[Index] = 0.5 * Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].a, 2) + Math.Pow(Foundation.AllFoundations[e].b, 2)) * Math.Cos(UgolProekc) + Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].e, 2) * 0.5) + Context.SvesaBetonPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.SvesaShebenPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.HShebenPodgotovki * 1 / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.DopRazmerNizhaKotlovana;
+
                     }
                 }
                 var lk_ALeft = Math.Max(Lk_dopA[0], Lk_dopA[3]) + Opora.AllOpora[Context.SelectedType].Baza_A * 0.5;
@@ -133,29 +118,17 @@ namespace ACADprogram
                 var lk_A = lk_ALeft + lk_ARight + Opora.AllOpora[Context.SelectedType].Baza_A;
                 var lk_B = lk_BUp + lk_BDown + Opora.AllOpora[Context.SelectedType].Baza_B;
                     //Глубина Котлована
-                    var hk = Foundation.AllFoundations[Context.SelectedType1].Glubina_Zalozhenia + Context.HBetonPodgotovki + Context.HShebenPodgotovki;
-                    //Определение размеров дна котлована взависимости от типа опоры и типа фундамента
+                var hk = Foundation.AllFoundations[Context.SelectedType1].Glubina_Zalozhenia + Context.HBetonPodgotovki + Context.HShebenPodgotovki;
+                //Определение размеров дна котлована взависимости от типа опоры и типа фундамента
                 
-
-
-                    //Настройка визуального стиля
-                    ViewportTable ModSpace = (ViewportTable)PdTrans.GetObject(PdDb.ViewportTableId, OpenMode.ForRead);
+                //Настройка визуального стиля
+                ViewportTable ModSpace = (ViewportTable)PdTrans.GetObject(PdDb.ViewportTableId, OpenMode.ForRead);
                 ViewportTableRecord ModSpaceRec = (ViewportTableRecord)PdTrans.GetObject(ModSpace["*Active"], OpenMode.ForWrite);
                 DBDictionary Style = (DBDictionary)PdTrans.GetObject(PdDb.VisualStyleDictionaryId, OpenMode.ForRead);
                 ModSpaceRec.VisualStyleId = Style.GetAt("Conceptual");
-                
 
                 //Исходные данные для отрезков(длина и координаты) 
-                var Baza_Op_A=6700;
-                var Baza_Op_B = 6700;
-
-                var A = lk_A; //размер по Х
-                var B = lk_B; //размер по У
                 var d = hk; //размер по Z
-
-                //var A = Context.LpoperekVL; //размер по Х
-                //var B = Context.LvdolVL; //размер по У
-                //var d = Context.GlubinaKotlovana; //размер по Z
                 var j = Context.OtkosKotlovana;    //Уклон откосов котлована
                 var SR_otkos = Context.OtkosSrezki; //Уклон откосов срезки
                 var SN_otkos = Context.OtkosNasypi; //Уклон откосов насыпи
@@ -176,12 +149,6 @@ namespace ACADprogram
                 //Вектор изменения отметки положения цетнра опоры
                 var Vector_ponizh = new Vector3d(0, 0, h_ponizh);
 
-                var linePL1 = A / 2;
-                var linePL2 = B / 2;
-
-                var linePL3 = linePL1 + d * j;
-                var linePL4 = linePL2 + d * j;
-
                 var VerhKotleft = lk_ALeft + d * j;
                 var VerhKotRight = lk_ARight + d * j;
                 var VerhKotUp = lk_BUp + d * j;
@@ -191,11 +158,15 @@ namespace ACADprogram
 
                 // Раздел определения координат точек определяющих рельеф
                 //Расстояние от цетра котлована до точке 9-12
-                var lt9101112 = 0.5 * Math.Sqrt(Math.Pow(linePL3, 2) + Math.Pow(linePL4, 2));
-
+                var lt09 = 0.5 * Math.Sqrt(Math.Pow(VerhKotleft, 2) + Math.Pow(VerhKotUp, 2));
+                var lt010 = 0.5 * Math.Sqrt(Math.Pow(VerhKotRight, 2) + Math.Pow(VerhKotUp, 2));
+                var lt011 = 0.5 * Math.Sqrt(Math.Pow(VerhKotRight, 2) + Math.Pow(VerhKotDown, 2));
+                var lt012 = 0.5 * Math.Sqrt(Math.Pow(VerhKotleft, 2) + Math.Pow(VerhKotDown, 2));
                 //Расстояние от центра котлована до точек в углах котлована (5-8)
-                var ly5678 = Math.Sqrt(Math.Pow(linePL3, 2) + Math.Pow(linePL4, 2));
-
+                var ly05 = Math.Sqrt(Math.Pow(VerhKotleft, 2) + Math.Pow(VerhKotUp, 2));
+                var ly06 = Math.Sqrt(Math.Pow(VerhKotRight, 2) + Math.Pow(VerhKotUp, 2));
+                var ly07 = Math.Sqrt(Math.Pow(VerhKotRight, 2) + Math.Pow(VerhKotDown, 2));
+                var ly08 = Math.Sqrt(Math.Pow(VerhKotleft, 2) + Math.Pow(VerhKotDown, 2));
                 //Высота точек (9-12) между главными точками 1-4
                 var h9 = 0.5 * (h1 + h3);
                 var h10 = 0.5 * (h3 + h2);
@@ -203,10 +174,10 @@ namespace ACADprogram
                 var h12 = 0.5 * (h4 + h1);
 
                 //Высота точек в углах котлована
-                var h5 = (h9 * ly5678) / lt9101112;
-                var h6 = (h10 * ly5678) / lt9101112;
-                var h7 = (h11 * ly5678) / lt9101112;
-                var h8 = (h12 * ly5678) / lt9101112;
+                var h5 = (h9 * ly05) / lt09;
+                var h6 = (h10 * ly06) / lt010;
+                var h7 = (h11 * ly07) / lt011;
+                var h8 = (h12 * ly08) / lt012;
 
                 //3D точки вершин верха котлована
                 
@@ -225,10 +196,10 @@ namespace ACADprogram
                 //Координаты точек для построения котлована
                 var pt0 = new Point3d(0, 0, 0);
                 var ptd = new Point3d(0, 0, d);
-                var ptd1 = new Point3d(-lk_ALeft, 0, d);
-                var ptd2 = new Point3d(lk_ARight, 0, d);
-                var ptd3 = new Point3d(0, lk_BUp, d);
-                var ptd4 = new Point3d(0, -lk_BDown, d);
+                //var ptd1 = new Point3d(-lk_ALeft, 0, d);
+                //var ptd2 = new Point3d(lk_ARight, 0, d);
+                //var ptd3 = new Point3d(0, lk_BUp, d);
+                //var ptd4 = new Point3d(0, -lk_BDown, d);
 
                 var pt5 = new Point3d(-lk_ALeft, -lk_BDown, 0);
                 var pt6 = new Point3d(-lk_ALeft, lk_BUp, 0);
@@ -324,13 +295,15 @@ namespace ACADprogram
                                 
                 //Разбивка тела "срезки"
                 var SR_h = 65000;                         //Высота усечённой пирамиды для отрисовки тела "срезки"
-                var lineSRX = linePL3 + SR_h * SR_otkos;  //Размер половины верхнего основания тела "срезки" поперек оси ВЛ
-                var lineSRY = linePL4 + SR_h * SR_otkos;  //Размер половины верхнего основания тела "срезки" вдоль оси ВЛ
+                var lineSRLeft = VerhKotleft + SR_h * SR_otkos;  //Размер половины верхнего основания тела "срезки" поперек оси ВЛ
+                var lineSRUp = VerhKotUp + SR_h * SR_otkos;  //Размер половины верхнего основания тела "срезки" вдоль оси ВЛ
+                var LineSRright = VerhKotRight + SR_h * SR_otkos;
+                var lineSRDown = VerhKotDown + SR_h * SR_otkos;
                                                           //Координаты точек верхнего основания усечёной пирамиды тела "срезки"
-                var SR_pt8 = new Point3d(-lineSRX, -lineSRY, SR_h);
-                var SR_pt5 = new Point3d(-lineSRX, lineSRY, SR_h);
-                var SR_pt6 = new Point3d(lineSRX, lineSRY, SR_h);
-                var SR_pt7 = new Point3d(lineSRX, -lineSRY, SR_h);
+                var SR_pt8 = new Point3d(-lineSRLeft, -lineSRDown, SR_h);
+                var SR_pt5 = new Point3d(-lineSRLeft, lineSRUp, SR_h);
+                var SR_pt6 = new Point3d(LineSRright, lineSRUp, SR_h);
+                var SR_pt7 = new Point3d(LineSRright, -lineSRDown, SR_h);
                 var SR_pl = new VirtualPolyline3d(SR_pt8, SR_pt5, SR_pt6, SR_pt7);
                 //Отрисовка объёмного тела "Срезки"
                 Solid3d SR_Volume = new Autodesk.AutoCAD.DatabaseServices.Solid3d();
@@ -346,10 +319,10 @@ namespace ACADprogram
 
                 //проверка пересечения рельефа с плоскостью усечённой пирамиды
                 var cols = new Point3dCollection();
-                var ptinter1 = new Point3d(-linePL3, -linePL4, (d + h_ponizh));
-                var ptinter2 = new Point3d(-linePL3, linePL4, (d + h_ponizh));
-                var ptinter3 = new Point3d(linePL3, linePL4, (d + h_ponizh));
-                var ptinter4 = new Point3d(linePL3, -linePL4, (d + h_ponizh));
+                var ptinter1 = new Point3d(-VerhKotleft, -VerhKotDown, (d + h_ponizh));
+                var ptinter2 = new Point3d(-VerhKotleft, VerhKotUp, (d + h_ponizh));
+                var ptinter3 = new Point3d(VerhKotRight, VerhKotUp, (d + h_ponizh));
+                var ptinter4 = new Point3d(VerhKotRight, -VerhKotDown, (d + h_ponizh));
                 var pllv = new VirtualPolyline3d(ptinter1, ptinter2, ptinter3, ptinter4);
 
                 pllv.Gets().IntersectWith(pl_pts.Gets(), Intersect.OnBothOperands, cols, IntPtr.Zero, IntPtr.Zero);
@@ -382,16 +355,6 @@ namespace ACADprogram
                         SRReliefdi.TransformBy(Matrix3d.Scaling(20, ptd));
                         SRReliefdi.TransformBy(Matrix3d.Displacement(sr));
 
-                        //var colss = new Point3dCollection();
-                        //pl_pts.Gets().TransformBy(Matrix3d.Displacement(sr));
-                        //{
-                        //    VirtualPolyline3d8pt Newpts = pl_pts;
-                        //    pl_pts = Newpts;
-                        //    pllv.Gets().IntersectWith(Newpts.Gets(), Intersect.OnBothOperands, colss, IntPtr.Zero, IntPtr.Zero); 
-                        //}
-
-
-
                         {
                             try
                             {
@@ -418,10 +381,7 @@ namespace ACADprogram
                 {
                     SR_Volume.Erase();
                 }
-
-
                 //throw new System.Exception("dfssdf");
-
 
                 //Орисовка Объёмного тела насыпи
                 //разбивка размеров усечённой пирамиды "Насыпи"
@@ -429,10 +389,10 @@ namespace ACADprogram
                 Point3d[] SN_t;
                 Point3d[] SNN_t;
 
-                var SN_lineX1 = linePL3 + SN_dop;
-                var SN_lineX2 = linePL3 + SN_dop;
-                var SN_lineY1 = linePL4 + SN_dop;
-                var SN_lineY2 = linePL4 + SN_dop;
+                var SN_lineX1 = VerhKotleft + SN_dop;
+                var SN_lineX2 = VerhKotRight + SN_dop;
+                var SN_lineY1 = VerhKotUp + SN_dop;
+                var SN_lineY2 = VerhKotDown + SN_dop;
                 SN_t = new Point3d[4]
                 {
                         new Point3d(-SN_lineX1, -SN_lineY2, d),
@@ -502,8 +462,8 @@ namespace ACADprogram
                 Context.SQN = Math.Round((areaN1 + (areaNas_GetFrom - areaN2)) * Math.Pow(10, -6), 3);
 
                 ////Координаты расположения фундаментов в плане базы опоры
-                var AOp2 = Baza_Op_A * 0.5;
-                var BOp2 = Baza_Op_B * 0.5;
+                var AOp2 = Opora.AllOpora[Context.SelectedType].Baza_A * 0.5;
+                var BOp2 = Opora.AllOpora[Context.SelectedType].Baza_B * 0.5;
                 ////Местополжение тип 1-4
                 //Высота установки фундаментов
                 var h_Fi = Context.HShebenPodgotovki + Context.HBetonPodgotovki;
