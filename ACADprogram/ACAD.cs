@@ -10,6 +10,8 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Threading;
+using Spire.Xls;
+using static ACADprogram.Crossbar;
 using AcadApp = Autodesk.AutoCAD.ApplicationServices.Application;
 
 namespace ACADprogram
@@ -46,7 +48,7 @@ namespace ACADprogram
 
         public static void Program(MainWindowContext Context)
         {
-           
+
 
             //Добавления документа и его базы данных
             var Pdoc = AcadApp.DocumentManager.MdiActiveDocument;
@@ -57,11 +59,11 @@ namespace ACADprogram
 
             using (var ld = Pdoc.LockDocument())
             //запуск транзакции
-            using (var PdTrans = PdDb.TransactionManager.StartTransaction())
+            using (var PdTrans = Ext.tr = PdDb.TransactionManager.StartTransaction())
             //открыти таблицы блоков для чтения
             using (var PdBlk = PdTrans.GetObject(PdDb.BlockTableId, OpenMode.ForRead) as BlockTable)
             //Открытие пространство модели таблицы блоков для записи.
-            using (var PdBlkRec = PdTrans.GetObject(PdBlk[BlockTableRecord.ModelSpace], OpenMode.ForWrite) as BlockTableRecord)
+            using (var PdBlkRec = Ext.rec = PdTrans.GetObject(PdBlk[BlockTableRecord.ModelSpace], OpenMode.ForWrite) as BlockTableRecord)
             {
                 //Определение размеров дна котлована взависимости от типа опоры и типа фундамента
 
@@ -82,45 +84,73 @@ namespace ACADprogram
                     new double(),
                     new double()
                 };
+                int[] FQuantity = new int[] { Context.FoundationQuantity1, Context.FoundationQuantity2, Context.FoundationQuantity3, Context.FoundationQuantity4 };
                 FoundationType[] typei = new FoundationType[] { Context.SelectedType1, Context.SelectedType2, Context.SelectedType3, Context.SelectedType4 };
-
-                foreach (var e in typei)
+                B5n[] Beamtype = new B5n[] { Context.SelectedBeam1, Context.SelectedBeam2, Context.SelectedBeam3, Context.SelectedBeam4 };
+                for (int i = 0; i < typei.Length; i++)
                 {
-                    if (e == FoundationType.FS1n_A || e == FoundationType.FSP1n_A)
-                    {
-                        Foundation.AllFoundations[e].b = 4200;
-                        UgolProekc = 9.4623 * Math.PI / 180;
-                    }
-                    else if (e == FoundationType.FS2n_A || e == FoundationType.FSP2n_A)
-                    {
-                        Foundation.AllFoundations[e].b = 5200;
-                        UgolProekc = 15.0202 * Math.PI / 180;
-                    }
-                    else
-                    {
-                        
-                        UgolProekc = 0 * Math.PI / 180;
-                    }
-                    int Index = Array.IndexOf(typei, e);
-                    Lk_dopA[Index] = Foundation.AllFoundations[e].a * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
-                    Lk_dopB[Index] = Foundation.AllFoundations[e].b * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
-                    if (Foundation.AllFoundations[e].Ugol_povorota > 0)
-                    {
-                        Lk_dopA[Index] = 0.5 * Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].a, 2) + Math.Pow(Foundation.AllFoundations[e].b, 2)) * Math.Cos(UgolProekc) + Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].e, 2) * 0.5) + Context.SvesaBetonPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.SvesaShebenPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.HShebenPodgotovki * 1 / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.DopRazmerNizhaKotlovana;
-                        Lk_dopB[Index] = 0.5 * Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].a, 2) + Math.Pow(Foundation.AllFoundations[e].b, 2)) * Math.Cos(UgolProekc) + Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].e, 2) * 0.5) + Context.SvesaBetonPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.SvesaShebenPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.HShebenPodgotovki * 1 / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.DopRazmerNizhaKotlovana;
+                    var e = typei[i];
+                    var g = FQuantity[i];
+                    switch (g)
+                        {
+                            case 1:
+                            if (e == FoundationType.FS1n_A || e == FoundationType.FSP1n_A)
+                            {
+                                Foundation.AllFoundations[e].OverallSize = 4200;
+                                UgolProekc = 9.4623 * Math.PI / 180;
+                            }
+                            else if (e == FoundationType.FS2n_A || e == FoundationType.FSP2n_A)
+                            {
+                                Foundation.AllFoundations[e].OverallSize = 5200;
+                                UgolProekc = 15.0202 * Math.PI / 180;
+                            }
+                            else
+                            {
+                                UgolProekc = 0 * Math.PI / 180;
+                            }
+                            Lk_dopA[i] = Foundation.AllFoundations[e].a * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
+                            Lk_dopB[i] = Foundation.AllFoundations[e].OverallSize * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
 
-                    }
+                            if (Foundation.AllFoundations[e].Ugol_povorota > 0)
+                            {
+                                Lk_dopA[i] = 0.5 * Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].a, 2) + Math.Pow(Foundation.AllFoundations[e].OverallSize, 2)) * Math.Cos(UgolProekc) + Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].e, 2) * 0.5) + Context.SvesaBetonPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.SvesaShebenPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.HShebenPodgotovki * 1 / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.DopRazmerNizhaKotlovana;
+                                Lk_dopB[i] = 0.5 * Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].a, 2) + Math.Pow(Foundation.AllFoundations[e].OverallSize, 2)) * Math.Cos(UgolProekc) + Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].e, 2) * 0.5) + Context.SvesaBetonPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.SvesaShebenPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.HShebenPodgotovki * 1 / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.DopRazmerNizhaKotlovana;
+                            }
+                            break;
+                            case 2:
+                            var f = Beamtype[i];
+                            var L2foundation = (Foundation.AllFoundations[e].a * 0.5 + Foundation.AllFoundations[e].e) * 2 + f.LB;
+                            Lk_dopA[i] = L2foundation * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
+                            Lk_dopB[i] = Foundation.AllFoundations[e].OverallSize * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
+                            if (Foundation.AllFoundations[e].Ugol_povorota > 0)
+                            {
+
+                            }
+
+                            break;
+
+                        }
+                    
                 }
-                var lk_ALeft = Math.Max(Lk_dopA[0], Lk_dopA[3]) + Opora.AllOpora[Context.SelectedType].Baza_A * 0.5;
-                var lk_ARight = Math.Max(Lk_dopA[1], Lk_dopA[2]) + Opora.AllOpora[Context.SelectedType].Baza_A * 0.5;
-                var lk_BUp = Math.Max(Lk_dopB[0], Lk_dopB[1]) + Opora.AllOpora[Context.SelectedType].Baza_B * 0.5;
-                var lk_BDown = Math.Max(Lk_dopB[2], Lk_dopB[3]) + Opora.AllOpora[Context.SelectedType].Baza_B * 0.5;
-                var lk_A = lk_ALeft + lk_ARight + Opora.AllOpora[Context.SelectedType].Baza_A;
-                var lk_B = lk_BUp + lk_BDown + Opora.AllOpora[Context.SelectedType].Baza_B;
-                    //Глубина Котлована
+
+                var lk_ALeft0 = Math.Max(Lk_dopA[0], Lk_dopA[3]) + Opora.AllOpora[Context.SelectedType].Baza_A * 0.5;
+                var lk_ARight0 = Math.Max(Lk_dopA[1], Lk_dopA[2]) + Opora.AllOpora[Context.SelectedType].Baza_A * 0.5;
+                var lk_BUp0 = Math.Max(Lk_dopB[0], Lk_dopB[1]) + Opora.AllOpora[Context.SelectedType].Baza_B * 0.5;
+                var lk_BDown0 = Math.Max(Lk_dopB[2], Lk_dopB[3]) + Opora.AllOpora[Context.SelectedType].Baza_B * 0.5;
+                //Глубина Котлована
                 var hk = Foundation.AllFoundations[Context.SelectedType1].Glubina_Zalozhenia + Context.HBetonPodgotovki + Context.HShebenPodgotovki;
                 //Определение размеров дна котлована взависимости от типа опоры и типа фундамента
-                
+                //Округление значения верха котлована с расчётом новоо значения низа котлована
+                var lk_Aleftk0 = RoundingSizePitWidth.RoundSize(lk_ALeft0, hk, Context.OtkosKotlovana, 100);
+                var lk_ARightk0 = RoundingSizePitWidth.RoundSize(lk_ARight0, hk, Context.OtkosKotlovana, 100);
+                var lk_BUpk0 = RoundingSizePitWidth.RoundSize(lk_BUp0, hk, Context.OtkosKotlovana, 100);
+                var lk_BDownk0 = RoundingSizePitWidth.RoundSize(lk_BDown0, hk, Context.OtkosKotlovana, 100);
+
+                var lk_ALeft = lk_Aleftk0;
+                var lk_ARight = lk_ARightk0;
+                var lk_BUp = lk_BUpk0;
+                var lk_BDown = lk_BDownk0;
+                //Округление значения верха котлована с расчётом новоо значения низа котлована
                 //Настройка визуального стиля
                 ViewportTable ModSpace = (ViewportTable)PdTrans.GetObject(PdDb.ViewportTableId, OpenMode.ForRead);
                 ViewportTableRecord ModSpaceRec = (ViewportTableRecord)PdTrans.GetObject(ModSpace["*Active"], OpenMode.ForWrite);
@@ -133,10 +163,6 @@ namespace ACADprogram
                 var SR_otkos = Context.OtkosSrezki; //Уклон откосов срезки
                 var SN_otkos = Context.OtkosNasypi; //Уклон откосов насыпи
                 var SN_dop = Context.LdopNasypi;   //Запас к размеру длины и ширины основания насыпи
-                var h1 = Context.HReliefPoperekVLeft;  //Высота от поверхности котлована до рельефа - срезка
-                var h2 = Context.HReliefPoperekVRight;  //Высота от поверхности котлована до рельефа - насыпь
-                var h3 = Context.HReliefVdolVLDown;    //Высота от поверхности котлована до рельефа - срезка
-                var h4 = Context.HReliefVdolVLUp;    //Высота от поверхности котлована до рельефа - насыпь
                 var d1 = Context.IGE1;    //Отметка первого (верхнего) слоя ИГЭ, мм
                 var d2 = Context.IGE2;    //Отметка второго слоя ИГЭ, мм
                 var d3 = Context.IGE3;    //Отметка третьего слоя ИГЭ, мм
@@ -145,6 +171,10 @@ namespace ACADprogram
                 var d6 = Context.IGE6;    //Отметка шестого слоя ИГЭ, мм
                 var h_ponizh = Context.OtmetkaPonizh; //Величина изменения отметки положения 3D фигур (понижение или повышения центра опоры)
 
+                var h_leftA = Context.HReliefPoperekVLeft;  //Высота от поверхности котлована до рельефа
+                var h_rightA = Context.HReliefPoperekVRight;  //Высота от поверхности котлована до рельефа
+                var h_downB = Context.HReliefVdolVLDown;    //Высота от поверхности котлована до рельефа
+                var h_UpB = Context.HReliefVdolVLUp;    //Высота от поверхности котлована до рельефа
 
                 //Вектор изменения отметки положения цетнра опоры
                 var Vector_ponizh = new Vector3d(0, 0, h_ponizh);
@@ -153,6 +183,13 @@ namespace ACADprogram
                 var VerhKotRight = lk_ARight + d * j;
                 var VerhKotUp = lk_BUp + d * j;
                 var VerhKotDown = lk_BDown + d * j;
+
+                var h1 = h_leftA * VerhKotleft / (Opora.AllOpora[Context.SelectedType].Baza_A * 0.5);
+                var h2 = h_rightA * VerhKotRight / (Opora.AllOpora[Context.SelectedType].Baza_A * 0.5);
+                var h3 = h_UpB * VerhKotUp / (Opora.AllOpora[Context.SelectedType].Baza_B * 0.5);
+                var h4 = h_downB * VerhKotDown / (Opora.AllOpora[Context.SelectedType].Baza_B * 0.5);
+                //MessageBox.Show($"{lk_ALeft}----{VerhKotleft}----{lk_ARight}----{VerhKotRight}----{lk_BUp}----{VerhKotUp}----{lk_BDown}----{VerhKotDown}----");
+                //return;
 
                 Point3d[] ptm;
 
@@ -180,7 +217,7 @@ namespace ACADprogram
                 var h8 = (h12 * ly08) / lt012;
 
                 //3D точки вершин верха котлована
-                
+
                 ptm = new Point3d[8]
                     {
                         new Point3d(-VerhKotleft, 0, (d + h1)),
@@ -196,10 +233,10 @@ namespace ACADprogram
                 //Координаты точек для построения котлована
                 var pt0 = new Point3d(0, 0, 0);
                 var ptd = new Point3d(0, 0, d);
-                //var ptd1 = new Point3d(-lk_ALeft, 0, d);
-                //var ptd2 = new Point3d(lk_ARight, 0, d);
-                //var ptd3 = new Point3d(0, lk_BUp, d);
-                //var ptd4 = new Point3d(0, -lk_BDown, d);
+                var ptd1 = new Point3d(-lk_ALeft, 0, d);
+                var ptd2 = new Point3d(lk_ARight, 0, d);
+                var ptd3 = new Point3d(0, lk_BUp, d);
+                var ptd4 = new Point3d(0, -lk_BDown, d);
 
                 var pt5 = new Point3d(-lk_ALeft, -lk_BDown, 0);
                 var pt6 = new Point3d(-lk_ALeft, lk_BUp, 0);
@@ -231,7 +268,7 @@ namespace ACADprogram
                 PdTrans.AddNewlyCreatedDBObject(UP3D, true);
 
                 //Отрисовка контура поверхности рельефа
-                
+
                 var pl_435 = new VirtualPolyline3d3pt(ptm[4], ptm[3], ptm[5]);
                 var pl_0d1 = new VirtualPolyline3d3pt(ptm[0], ptd, ptm[1]);
                 var pl_726 = new VirtualPolyline3d3pt(ptm[7], ptm[2], ptm[6]);
@@ -280,7 +317,7 @@ namespace ACADprogram
                     Reliefd_iter.TransformBy(Matrix3d.Displacement(p));
                     {
                         var newSlise = UP3D_Reliefd_iter.Slice(Reliefd_iter, true);
-                        newSlise.ToBD(PdBlkRec, PdTrans);
+                        newSlise.ToBD();
                         UP3D_Reliefd_iter = newSlise;
 
                         Context.Volumes.Add(new VolumeInfo($"Объем ИГЭ-№{++counter} м3:", newSlise.MassProperties.Volume));
@@ -292,14 +329,14 @@ namespace ACADprogram
 
                 foreach (var VOL in Context.Volumes)
                     VOL.Value *= Math.Pow(10, -9);
-                                
+
                 //Разбивка тела "срезки"
                 var SR_h = 65000;                         //Высота усечённой пирамиды для отрисовки тела "срезки"
                 var lineSRLeft = VerhKotleft + SR_h * SR_otkos;  //Размер половины верхнего основания тела "срезки" поперек оси ВЛ
                 var lineSRUp = VerhKotUp + SR_h * SR_otkos;  //Размер половины верхнего основания тела "срезки" вдоль оси ВЛ
                 var LineSRright = VerhKotRight + SR_h * SR_otkos;
                 var lineSRDown = VerhKotDown + SR_h * SR_otkos;
-                                                          //Координаты точек верхнего основания усечёной пирамиды тела "срезки"
+                //Координаты точек верхнего основания усечёной пирамиды тела "срезки"
                 var SR_pt8 = new Point3d(-lineSRLeft, -lineSRDown, SR_h);
                 var SR_pt5 = new Point3d(-lineSRLeft, lineSRUp, SR_h);
                 var SR_pt6 = new Point3d(LineSRright, lineSRUp, SR_h);
@@ -359,7 +396,7 @@ namespace ACADprogram
                             try
                             {
                                 var SRSlise = SRV_Reliefdi.Slice(SRReliefdi, true);
-                                SRSlise.ToBD(PdBlkRec, PdTrans);
+                                SRSlise.ToBD();
                                 SRV_Reliefdi = SRSlise;
 
                                 Context.VolumesSR.Add(new VolumeInfo($"Объем ИГЭ-№{++poryadok} м3:", SRSlise.MassProperties.Volume));
@@ -426,11 +463,11 @@ namespace ACADprogram
                     },
                       new LoftProfile[] { }, null, loftOptionsBuilder.ToLoftOptions());
                 SN_Volume.TransformBy(Matrix3d.Displacement(Vector_ponizh));
-                SN_Volume.ToBD(PdBlkRec, PdTrans);
+                SN_Volume.ToBD();
 
                 //Обрезка объёмного тела насыпи по плоскости рельефа
                 var SNV_Relief = SN_Volume.Slice(NewSurf, true);
-                SNV_Relief.ToBD(PdBlkRec, PdTrans);
+                SNV_Relief.ToBD();
                 SNV_Relief.Erase();
                 var VolumesN1 = Math.Round(SN_Volume.MassProperties.Volume * Math.Pow(10, -9), 3);
                 Context.VolumesN = VolumesN1;
@@ -456,7 +493,7 @@ namespace ACADprogram
                 var SliceSLoft = NasS_loft.SliceBySurface(NewSurf);
                 var SliceSN = Nas_F.SliceBySurface(NewSurf);
                 //Получение площиди поверхностей
-                
+
                 var areaN1 = SliceSLoft.NewSurface.GetArea();
                 var areaN2 = SliceSN.NegativeHalfSurface.GetArea();
                 Context.SQN = Math.Round((areaN1 + (areaNas_GetFrom - areaN2)) * Math.Pow(10, -6), 3);
@@ -483,22 +520,22 @@ namespace ACADprogram
                     //var ggg2 = new Point3d(0, 1, 1);
                     ////ModSpaceRec.SetViewDirection(OrthographicView.TopView); ////Вид сверху
                     //Line3d line3D = new Line3d(ggg, ggg2);
-                    
+
                     //if (Foundation.AllFoundations[Context.SelectedType1].n_bolt == 2)
                     //{
                     //    Fund_Type1i.TransformBy(Matrix3d.Mirroring(line3D));
                     //}
                     Fund_Type1i.TransformBy(Matrix3d.Displacement(PtType1));
-                    Fund_Type1i.ToBD(PdBlkRec, PdTrans);
-                    
-                    
+                    Fund_Type1i.ToBD();
+
+
                 }
                 //ФУНДАМЕНТЫ. ТИП 1
                 //ФУНДАМЕНТЫ. ТИП 2
                 Solid3d Fund_Type2i = FoundationBuild.Build(Context.SelectedType2, Vector_ponizh);
                 Fund_Type2i.TransformBy(Matrix3d.Rotation((Math.PI + (Foundation.AllFoundations[Context.SelectedType2].Ugol_povorota * Math.PI / 180)), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
                 Fund_Type2i.TransformBy(Matrix3d.Displacement(PtType2));
-                Fund_Type2i.ToBD(PdBlkRec, PdTrans);
+                Fund_Type2i.ToBD();
                 //ФУНДАМЕНТЫ. ТИП 2
                 //ФУНДАМЕНТЫ. ТИП 3
                 var UgP = new double();
@@ -513,16 +550,16 @@ namespace ACADprogram
                 Solid3d Fund_Type3i = FoundationBuild.Build(Context.SelectedType3, Vector_ponizh);
                 Fund_Type3i.TransformBy(Matrix3d.Rotation(UgP, new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
                 Fund_Type3i.TransformBy(Matrix3d.Displacement(PtType3));
-                Fund_Type3i.ToBD(PdBlkRec, PdTrans);
+                Fund_Type3i.ToBD();
                 //ФУНДАМЕНТЫ. ТИП 3
                 //ФУНДАМЕНТЫ. ТИП 4
                 Solid3d Fund_Type4i = FoundationBuild.Build(Context.SelectedType4, Vector_ponizh);
                 Fund_Type4i.TransformBy(Matrix3d.Rotation((Foundation.AllFoundations[Context.SelectedType4].Ugol_povorota * Math.PI / 180), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
                 Fund_Type4i.TransformBy(Matrix3d.Displacement(PtType4));
-                Fund_Type4i.ToBD(PdBlkRec, PdTrans);
+                Fund_Type4i.ToBD();
                 //ФУНДАМЕНТЫ. ТИП 4
 
-                
+
                 //Щебёночная подготовка
                 //Отметки установки щебёночной подготовки
                 var Pt_SPF1 = new Vector3d(-AOp2, BOp2, 0);
@@ -535,8 +572,8 @@ namespace ACADprogram
                 {
                     ShebPodgot1.TransformBy(Matrix3d.Rotation((-Foundation.AllFoundations[Context.SelectedType1].Ugol_povorota * Math.PI / 180), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
                     ShebPodgot1.TransformBy(Matrix3d.Displacement(Pt_SPF1));
-                    ShebPodgot1.ToBD(PdBlkRec, PdTrans);
-                    VolShebPodgot1= Math.Round(ShebPodgot1.MassProperties.Volume * Math.Pow(10, -9), 3);
+                    ShebPodgot1.ToBD();
+                    VolShebPodgot1 = Math.Round(ShebPodgot1.MassProperties.Volume * Math.Pow(10, -9), 3);
                 }
                 //Щебёночная подготовка под ф-т 1
                 //Щебёночная подготовка под ф-т 2
@@ -545,7 +582,7 @@ namespace ACADprogram
                 {
                     ShebPodgot2.TransformBy(Matrix3d.Rotation((Math.PI + (Foundation.AllFoundations[Context.SelectedType2].Ugol_povorota * Math.PI / 180)), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
                     ShebPodgot2.TransformBy(Matrix3d.Displacement(Pt_SPF2));
-                    ShebPodgot2.ToBD(PdBlkRec, PdTrans);
+                    ShebPodgot2.ToBD();
                     VolShebPodgot2 = Math.Round(ShebPodgot2.MassProperties.Volume * Math.Pow(10, -9), 3);
                 }
                 //Щебёночная подготовка под ф-т 2
@@ -555,7 +592,7 @@ namespace ACADprogram
                 {
                     ShebPodgot3.TransformBy(Matrix3d.Rotation(UgP, new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
                     ShebPodgot3.TransformBy(Matrix3d.Displacement(Pt_SPF3));
-                    ShebPodgot3.ToBD(PdBlkRec, PdTrans);
+                    ShebPodgot3.ToBD();
                     VolShebPodgot3 = Math.Round(ShebPodgot3.MassProperties.Volume * Math.Pow(10, -9), 3);
                 }
                 //Щебёночная подготовка под ф-т 3
@@ -565,7 +602,7 @@ namespace ACADprogram
                 {
                     ShebPodgot4.TransformBy(Matrix3d.Rotation((Foundation.AllFoundations[Context.SelectedType4].Ugol_povorota * Math.PI / 180), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
                     ShebPodgot4.TransformBy(Matrix3d.Displacement(Pt_SPF4));
-                    ShebPodgot4.ToBD(PdBlkRec, PdTrans);
+                    ShebPodgot4.ToBD();
                     VolShebPodgot4 = Math.Round(ShebPodgot4.MassProperties.Volume * Math.Pow(10, -9), 3);
                 }
                 Context.VolumeShebenPodg = VolShebPodgot1 + VolShebPodgot2 + VolShebPodgot3 + VolShebPodgot4;
@@ -582,7 +619,7 @@ namespace ACADprogram
                 {
                     PodBeton1.TransformBy(Matrix3d.Rotation((-Foundation.AllFoundations[Context.SelectedType1].Ugol_povorota * Math.PI / 180), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
                     PodBeton1.TransformBy(Matrix3d.Displacement(Pt_BPF1));
-                    PodBeton1.ToBD(PdBlkRec, PdTrans);
+                    PodBeton1.ToBD();
                     VolPodBeton1 = Math.Round(PodBeton1.MassProperties.Volume * Math.Pow(10, -9), 3);
                 }
                 //Бетонная подготовка ф-т 1
@@ -592,17 +629,17 @@ namespace ACADprogram
                 {
                     PodBeton2.TransformBy(Matrix3d.Rotation((Math.PI + (Foundation.AllFoundations[Context.SelectedType2].Ugol_povorota * Math.PI / 180)), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
                     PodBeton2.TransformBy(Matrix3d.Displacement(Pt_BPF2));
-                    PodBeton2.ToBD(PdBlkRec, PdTrans);
+                    PodBeton2.ToBD();
                     VolPodBeton2 = Math.Round(PodBeton2.MassProperties.Volume * Math.Pow(10, -9), 3);
                 }
                 //Бетонная подготовка ф-т 2
                 //Бетонная подготовка ф-т 3
                 double VolPodBeton3 = 0;
                 if ((Builder.TryBuildBeton(Context.SelectedType3, Vector_ponizh, Context, out var PodBeton3)))
-                { 
+                {
                     PodBeton3.TransformBy(Matrix3d.Rotation(UgP, new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
                     PodBeton3.TransformBy(Matrix3d.Displacement(Pt_BPF3));
-                    PodBeton3.ToBD(PdBlkRec, PdTrans);
+                    PodBeton3.ToBD();
                     VolPodBeton3 = Math.Round(PodBeton3.MassProperties.Volume * Math.Pow(10, -9), 3);
                 }
                 //Бетонная подготовка ф-т 3
@@ -612,12 +649,66 @@ namespace ACADprogram
                 {
                     BetonPod4.TransformBy(Matrix3d.Rotation((Foundation.AllFoundations[Context.SelectedType4].Ugol_povorota * Math.PI / 180), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
                     BetonPod4.TransformBy(Matrix3d.Displacement(Pt_BPF4));
-                    BetonPod4.ToBD(PdBlkRec, PdTrans);
+                    BetonPod4.ToBD();
                     VolPodBeton4 = Math.Round(BetonPod4.MassProperties.Volume * Math.Pow(10, -9), 3);
                 }
                 Context.VolumeBetonPodg = VolPodBeton1 + VolPodBeton2 + VolPodBeton3 + VolPodBeton4;
                 //Бетонная подготовка ф-т 4
+                //Ригель в модели
+                for (int ri = 1; ri <= Context.crossbarquantityType1 + Context.crossbarquantityType1A; ri++)
+                {
+                    if (Crossbar.TryBuildCrossbar(Context.SelectedTypeCr1, Vector_ponizh, Context, out var Crossbar3DType1, Context.SelectedType1, 0, ri, out var alpha, out var betta))
+                    {
+                        Crossbar3DType1.ToBD();
+                        Crossbar3DType1.TransformBy(Matrix3d.Rotation((-Foundation.AllFoundations[Context.SelectedType1].Ugol_povorota * Math.PI / 180), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
+                        Crossbar3DType1.TransformBy(Matrix3d.Displacement(Pt_SPF1));
+                    }
+                }
+                for (int ri = 1; ri <= Context.crossbarquantityType2 + Context.crossbarquantityType2A; ri++)
+                {
+                    if (Crossbar.TryBuildCrossbar(Context.SelectedTypeCr2, Vector_ponizh, Context, out var Crossbar3DType2, Context.SelectedType2, 1, ri, out var alpha, out var betta))
+                    {
+                        Crossbar3DType2.ToBD();
+                        Crossbar3DType2.TransformBy(Matrix3d.Rotation((Math.PI + (Foundation.AllFoundations[Context.SelectedType2].Ugol_povorota * Math.PI / 180)), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
+                        Crossbar3DType2.TransformBy(Matrix3d.Displacement(Pt_SPF2));
+                    }
+                }
+                for (int ri = 1; ri <= Context.crossbarquantityType3 + Context.crossbarquantityType3A; ri++)
+                {
+                    if (Crossbar.TryBuildCrossbar(Context.SelectedTypeCr3, Vector_ponizh, Context, out var Crossbar3DType3, Context.SelectedType3, 2, ri, out var alpha, out var betta))
+                    {
+                        Crossbar3DType3.ToBD();
+                        if (Foundation.AllFoundations[Context.SelectedType3].Ugol_povorota == 0)
+                        {
+                            Crossbar3DType3.TransformBy(Matrix3d.Rotation((Math.PI), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
+                        }
+                        Crossbar3DType3.TransformBy(Matrix3d.Rotation(UgP, new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
+                        Crossbar3DType3.TransformBy(Matrix3d.Displacement(Pt_SPF3));
+                    }
+                }
+                for (int ri = 1; ri <= Context.crossbarquantityType4 + Context.crossbarquantityType4A; ri++)
+                {
+                    if (Crossbar.TryBuildCrossbar(Context.SelectedTypeCr4, Vector_ponizh, Context, out var Crossbar3DType4, Context.SelectedType4, 3, ri, out var alpha, out var betta))
+                    {
+                        Crossbar3DType4.ToBD();
+                        Crossbar3DType4.TransformBy(Matrix3d.Rotation((Foundation.AllFoundations[Context.SelectedType4].Ugol_povorota * Math.PI / 180), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
+                        Crossbar3DType4.TransformBy(Matrix3d.Displacement(Pt_SPF4));
+                    }
+                }
+                //Ригель в модели
+                //var ffff = new NextBeam();
+                //if (ffff.BuildBeam(Context, out var B2n, out Solid3d Hole_d1,out Vector3d[] pt_holed1, out Vector3d[] pt_hole2, out Solid3d B1n_d4, out Solid3d B1n_d5, out Solid3d B1n_d6))
+                //{
+                //    B2n.ToBD();
+                //}
 
+                ////Управление Балками в модели
+                //Solid3d B1 = new Solid3d();
+                //B1 = Context.SelectedBeam1.BuildBeam();
+                //B1.TransformBy(Matrix3d.Rotation(-45 * Math.PI / 180, new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
+                ////Высота установки ригеля
+                //var Hb1 = h_Fi + Foundation.AllFoundations[Context.SelectedType1].hf;
+                //B1.TransformBy(Matrix3d.Displacement(new Vector3d(-AOp2+197.9899, BOp2-197.9899, Hb1)));
 
 
 
@@ -636,31 +727,90 @@ namespace ACADprogram
             }
             Pdoc.Database.SaveAs(strDWGname, DwgVersion.Current);
 
+            //Excel
+            Workbook workbook = new Workbook();
+            Worksheet worksheet = workbook.Worksheets[0];
+            worksheet.Range[1, 1].Value = "Номер опоры";
+            worksheet.Range[1, 2].Value = "Объёмы срезаемого грунта, м3";
+            worksheet.Range[1, 9].Value = "Объёмы разрабатываемого грунта в котловане, м3";
+            worksheet.Range[1, 16].Value = "Объёмы насыпи, м3";
+            worksheet.Range[1, 17].Value = "Площадь планировки насыпи, м3";
+            worksheet.Range[1, 18].Value = "Объём бетонной подготовки, м3";
+            worksheet.Range[1, 19].Value = "Объём щебёночной подготовки, м3";
+            for (var b = 0; b < Context.Volumes.Count; b++)
+            {
+                worksheet.Range[2, b + 2].Value = $"Объёмы ИГЭ-№{b + 1}";
+                worksheet.Range[3, b + 2].Value = $"{Context.VolumesSR[b].Value}";
+                worksheet.Range[2, b + 9].Value = $"Объёмы ИГЭ-№{b + 1}";
+                worksheet.Range[3, b + 9].Value = $"{Context.Volumes[b].Value}";
+            }
+            worksheet.Range[3, 16].Value = $"{Context.VolumesN}";
+            worksheet.Range[3, 17].Value = $"{Context.SQN}";
+            worksheet.Range[3, 18].Value = $"{Context.VolumeBetonPodg}";
+            worksheet.Range[3, 19].Value = $"{Context.VolumeShebenPodg}";
+            worksheet.Range[3, 1].Value = $"{NumberOP}";
+            worksheet.Merge(worksheet.Range[1, 1], worksheet.Range[2, 1]);
+            worksheet["B1:H1"].Merge();
+            worksheet["I1:O1"].Merge();
+            worksheet["P1:P2"].Merge();
+            worksheet["Q1:Q2"].Merge();
+            worksheet["R1:R2"].Merge();
+            worksheet["S1:S2"].Merge();
+            worksheet.AllocatedRange.ColumnWidth = 17;
+            worksheet.AllocatedRange.RowHeight = 25;
+            CellStyle style = workbook.Styles.Add("new style");
+            style.Font.FontName = "ISOCPEUR";
+            style.Font.Size= 12;
+            style.VerticalAlignment = VerticalAlignType.Center;
+            style.HorizontalAlignment = HorizontalAlignType.Center;
+            style.WrapText = true;
+            worksheet.AllocatedRange.Style = style;
+            workbook.SaveToFile($"C:\\Users\\{Environment.UserName}\\Desktop\\{NumberOP}.xlsx", ExcelVersion.Version2013);
+            //Excel
             Context.ExceptionMessage = "EndCommand";
+
+
+            //var beams = new List<BeamBase>()
+            //{
+            //    new TestBeam() { xxx = 22 },
+            //    new TestBeam(),
+            //    new TestBeam(),
+            //    new TestBeam(),
+            //    new TestBeam(),
+            //    new TestBeam2() { zzz = 23 },
+            //    new TestBeam2(),
+            //    new TestBeam2(),
+            //    new TestBeam2(),
+            //};
+
+
+            //foreach (var b in beams)
+            //{
+            //    b.BuildBeam();
+            //}
+
+            //var beam = new BeamBase();
+
+
         }
     }
 
     public static class Ext
     {
-        public static void ToBD(this Entity ent, BlockTableRecord rec, Transaction tr)
+        public static BlockTableRecord rec;
+        public static Transaction tr;
+
+        public static void ToBD(this Entity ent)
         {
-
-
-
-            using (BlockTableRecord sdsd = new BlockTableRecord())
-            {
-                
-            }
-
-                rec.AppendEntity(ent);
+            rec.AppendEntity(ent);
             tr.AddNewlyCreatedDBObject(ent, true);
         }
-        
+
     }
 
     public class VirtualPolyline3d
     {
-        public VirtualPolyline3d(Point3d ps1, Point3d ps2, Point3d ps3, Point3d ps4) 
+        public VirtualPolyline3d(Point3d ps1, Point3d ps2, Point3d ps3, Point3d ps4)
         {
             points[0] = ps1;
             points[1] = ps2;
@@ -700,7 +850,7 @@ namespace ACADprogram
                 points[3],
                 points[0]
             };
-            var Poliline3D = new Polyline3d(Poly3dType.SimplePoly,pts,true);
+            var Poliline3D = new Polyline3d(Poly3dType.SimplePoly, pts, true);
 
             PdBlkRec.AppendEntity(Poliline3D);
             PdTrans.AddNewlyCreatedDBObject(Poliline3D, true);
@@ -793,7 +943,12 @@ namespace ACADprogram
             PdBlkRec.AppendEntity(Poliline3D);
             PdTrans.AddNewlyCreatedDBObject(Poliline3D, true);
         }
-     }
+        public void Move(Vector3d vect)
+        {
+            for (int i = 0; i < points.Length; i++)
+                points[i] = points[i] + vect;
+        }
+    }
 
 
     public class VirtualPolyline3d3pt
@@ -802,7 +957,7 @@ namespace ACADprogram
         {
             points[0] = ps1;
             points[1] = ps2;
-            points[2] = ps3;  
+            points[2] = ps3;
         }
         public readonly Point3d[] points = new Point3d[3];
         public Polyline3d Gets()
@@ -823,7 +978,7 @@ namespace ACADprogram
             {
                 points[0],
                 points[1],
-                points[2],   
+                points[2],
             };
             var Poliline3D = new Polyline3d(Poly3dType.SimplePoly, pts, true);
             Poliline3D.Closed = false;
@@ -848,7 +1003,7 @@ namespace ACADprogram
             points[9] = ps10;
             points[10] = ps11;
             points[11] = ps12;
-            
+
         }
         public readonly Point3d[] points = new Point3d[12];
         public Polyline3d Gets()
@@ -903,7 +1058,265 @@ namespace ACADprogram
             return this;
         }
     }
+    public class Round
+    {
+        public static double RoundVerh(double number, int accuracy)
+        {
+            var e = number / accuracy;
+            var t = (Math.Round(e) + 1) * accuracy;
+            return t;
+        }
+    }
+    public static class RoundingSizePitWidth
+    {
+        public static double RoundSize(this double width, double depth, double slope, int accuracy)
+        {
+            var Upperbase = width + depth * slope;
+            var Upperbase_accuracy = Upperbase / accuracy;
+            var Round_Upperbase = (Math.Round(Upperbase_accuracy)) * accuracy;
+            var Bottombase = Round_Upperbase - depth * slope;
+            return Bottombase;
+        }
+    }
+    public class DisplacementCrossbar
+    {
+        public static double Displacement(FoundationType foundationTypei, CrossbarType crossbarTypeCri, double distance)
+        {
+            var Hf = Foundation.AllFoundations[foundationTypei].hf;
+            var H1 = Foundation.AllFoundations[foundationTypei].h1;
+            var H2 = Foundation.AllFoundations[foundationTypei].h2;
+            var H3 = Foundation.AllFoundations[foundationTypei].h3;
+            var H4 = Foundation.AllFoundations[foundationTypei].h4;
+            var Hk = Foundation.AllFoundations[foundationTypei].hk1;
 
+            var hkol = Hf - (H1 + H2 + H3 + H4 + Hk);
+            var delta = (Foundation.AllFoundations[foundationTypei].ak - Foundation.AllFoundations[foundationTypei].ak1) * 0.5;
+            var level_Crossbar = distance + Crossbar.AllCrossbar[crossbarTypeCri].Height;
+            var delta_Crossbar = level_Crossbar * delta/ hkol;
+            var a_Crossbar = Foundation.AllFoundations[foundationTypei].ak1 * 0.5 + delta_Crossbar;
+            return a_Crossbar;
+        }
+    }
+    public class VectorCrossbarAnker
+    {
+        public static Vector3d VectorAnker(FoundationType foundationTypei, CrossbarType crossbarTypeCri, double distance, MainWindowContext Context, int ai, int ri, double alpha)
+        {
+            int[] m = new int[] { Context.crossbarquantityType1, Context.crossbarquantityType2, Context.crossbarquantityType3, Context.crossbarquantityType4 };
+            int[] n = new int[] { Context.crossbarquantityType1A, Context.crossbarquantityType2A, Context.crossbarquantityType3A, Context.crossbarquantityType4A };
+            var Hf = Foundation.AllFoundations[foundationTypei].hf;
+            var H1 = Foundation.AllFoundations[foundationTypei].h1;
+            var H2 = Foundation.AllFoundations[foundationTypei].h2;
+            var H3 = Foundation.AllFoundations[foundationTypei].h3;
+            var H4 = Foundation.AllFoundations[foundationTypei].h4;
+            var Hk = Foundation.AllFoundations[foundationTypei].hk1;
+            var e = Foundation.AllFoundations[foundationTypei].e;
+            var Hb = Context.HBetonPodgotovki;
+            var Hsh = Context.HShebenPodgotovki;
+            var hkol = Hf - (H1 + H2 + H3 + H4 + Hk);
+            //Вектор по стороне "В"
+            Vector3d Vector_AnkerB = new Vector3d();
+            var delta_h = Crossbar.AllCrossbar[crossbarTypeCri].FullWidth * Math.Sin(alpha);
+            double delta = (Foundation.AllFoundations[foundationTypei].bk - Foundation.AllFoundations[foundationTypei].bk1) * 0.5;
+            double Height_Crossbar = new double();
+            double level_Crossbar = new double();
+            double delta_Crossbar = new double();
+            double b_Crossbar = new double();
+            double a_Crossbar = new double();
+            Height_Crossbar = distance + Crossbar.AllCrossbar[crossbarTypeCri].Height * 0.5 + Crossbar.AllCrossbar[crossbarTypeCri].Height * (ri - 1);
+            level_Crossbar = distance + Crossbar.AllCrossbar[crossbarTypeCri].Height * ri;
+            delta_Crossbar = level_Crossbar * delta / hkol;
+            b_Crossbar = Foundation.AllFoundations[foundationTypei].bk1 * 0.5 + delta_Crossbar;
+            a_Crossbar = Height_Crossbar * e / hkol;
+            Vector_AnkerB = new Vector3d(-a_Crossbar, (b_Crossbar), (Hf + Hb + Hsh - level_Crossbar));
+            //var Vector_Anker = new Vector3d(-a_Crossbar, -(b_Crossbar + Crossbar.AllCrossbar[crossbarTypeCri].FullWidth), (Hf + Hb + Hsh - level_Crossbar));
+            //var Vector_AnkerBi = new Vector3d(-a_Crossbar, (b_Crossbar), (Hf + Hb + Hsh - level_Crossbar));
+            //Вектор по стороне "В"
+            //Вектор по стороне "А"
+            double deltaA = new double();
+            double Height_CrossbarA = new double();
+            double level_CrossbarA = new double();
+            double delta_CrossbarA = new double();
+            double a_CrossbarA = new double();
+            Vector3d Vector_AnkerA = new Vector3d();
+            deltaA = (Foundation.AllFoundations[foundationTypei].ak - Foundation.AllFoundations[foundationTypei].ak1) * 0.5;
+            Height_CrossbarA = distance + (Crossbar.AllCrossbar[crossbarTypeCri].Height * 0.5) + (Crossbar.AllCrossbar[crossbarTypeCri].Height) * (ri - 1);
+            level_CrossbarA = distance + (Crossbar.AllCrossbar[crossbarTypeCri].Height) * ri;
+            delta_CrossbarA = level_CrossbarA * deltaA / hkol;
+            a_CrossbarA = level_CrossbarA * e / hkol + Foundation.AllFoundations[foundationTypei].ak1 * 0.5 + delta_CrossbarA;
+            Vector_AnkerA = new Vector3d(-a_CrossbarA, (0), (Hf + Hb + Hsh - level_CrossbarA));
+            //Вектор по стороне "А"
+            Vector3d Vector_Anker = new Vector3d();
+            if (m[ai] > 0 && n[ai] == 0){ Vector_Anker = Vector_AnkerB; }
+            else if (m[ai] == 0 && n[ai] > 0){ Vector_Anker = Vector_AnkerA; }
+            else
+            {
+                if ((ri % 2) == 0) { Vector_Anker = Vector_AnkerA; }
+                else { Vector_Anker = Vector_AnkerB; }
+            }
+            return Vector_Anker;
+        }
+    }
+    public class VectorCrossbarStraight
+    {
+        public static Vector3d VectorStraight(FoundationType foundationTypei, CrossbarType crossbarTypeCri, double distance, MainWindowContext Context, int ai, int ri)
+        {
+            int[] m = new int[] { Context.crossbarquantityType1, Context.crossbarquantityType2, Context.crossbarquantityType3, Context.crossbarquantityType4 };
+            int[] n = new int[] { Context.crossbarquantityType1A, Context.crossbarquantityType2A, Context.crossbarquantityType3A, Context.crossbarquantityType4A };
+            var Hf = Foundation.AllFoundations[foundationTypei].hf;
+            var H1 = Foundation.AllFoundations[foundationTypei].h1;
+            var H2 = Foundation.AllFoundations[foundationTypei].h2;
+            var H3 = Foundation.AllFoundations[foundationTypei].h3;
+            var H4 = Foundation.AllFoundations[foundationTypei].h4;
+            var Hk = Foundation.AllFoundations[foundationTypei].hk1;
+            var e = Foundation.AllFoundations[foundationTypei].e;
+            var Hb = Context.HBetonPodgotovki;
+            var Hsh = Context.HShebenPodgotovki;
+            
+            var hkol = Hf - (H1 + H2 + H3 + H4 + Hk);
+            //Вектор по стороне "В"
+            var deltaB = (Foundation.AllFoundations[foundationTypei].ak - Foundation.AllFoundations[foundationTypei].ak1) * 0.5;
+            var level_CrossbarB = distance + Crossbar.AllCrossbar[crossbarTypeCri].Height*ri;
+            var delta_CrossbarB = level_CrossbarB * deltaB / hkol;
+            var a_Crossbar = Foundation.AllFoundations[foundationTypei].ak1 * 0.5 + delta_CrossbarB;
+            //Vector3d Vector_Straight = new Vector3d((a_Crossbar + Crossbar.AllCrossbar[crossbarTypeCri].FullWidth), 0, (Hf + Hb + Hsh - level_Crossbar));
+            Vector3d Vector_StraightB = new Vector3d(-(a_Crossbar + Crossbar.AllCrossbar[crossbarTypeCri].FullWidth), 0, (Hf + Hb + Hsh - level_CrossbarB));
+            //Вектор по стороне "В"
+            //Вектор по стороне "А"
+            var deltaA = (Foundation.AllFoundations[foundationTypei].bk - Foundation.AllFoundations[foundationTypei].bk1) * 0.5;
+            var level_CrossbarA = distance + Crossbar.AllCrossbar[crossbarTypeCri].Height * ri;
+            var delta_CrossbarA = level_CrossbarA * deltaA / hkol;
+            var b_Crossbar = Foundation.AllFoundations[foundationTypei].bk1 * 0.5 + delta_CrossbarA;
+            Vector3d Vector_StraightA = new Vector3d(0, -(b_Crossbar + Crossbar.AllCrossbar[crossbarTypeCri].FullWidth), (Hf + Hb + Hsh - level_CrossbarA));
+            //Вектор по стороне "А"
+            Vector3d Vector_Straight = new Vector3d();
+            
+            if (m[ai] > 0 && n[ai] == 0)
+            {
+                Vector_Straight = Vector_StraightB;
+            }
+            else if (m[ai] == 0 && n[ai] > 0)
+            {
+                Vector_Straight = Vector_StraightA;
+            }
+            else 
+            {
+                if ((ri % 2) == 0)
+                {
+                    Vector_Straight = Vector_StraightA;
+                }
+                else
+                {
+                    Vector_Straight = Vector_StraightB;
+                }
+            }
+            return Vector_Straight;
+        }
+    }
+    public class VectorBeamCrossbarAnker
+    {
+        public static Vector3d VectorAnker(FoundationType foundationTypei, CrossbarType crossbarTypeCri, double distance, MainWindowContext Context, int ai, int ri, double alpha, double betta)
+        {
+            int[] m = new int[] { Context.crossbarquantityType1, Context.crossbarquantityType2, Context.crossbarquantityType3, Context.crossbarquantityType4 };
+            int[] n = new int[] { Context.crossbarquantityType1A, Context.crossbarquantityType2A, Context.crossbarquantityType3A, Context.crossbarquantityType4A };
+            var Hf = Foundation.AllFoundations[foundationTypei].hf;
+            var H1 = Foundation.AllFoundations[foundationTypei].h1;
+            var H2 = Foundation.AllFoundations[foundationTypei].h2;
+            var H3 = Foundation.AllFoundations[foundationTypei].h3;
+            var H4 = Foundation.AllFoundations[foundationTypei].h4;
+            var Hk = Foundation.AllFoundations[foundationTypei].hk1;
+            var e = Foundation.AllFoundations[foundationTypei].e;
+            var Hb = Context.HBetonPodgotovki;
+            var Hsh = Context.HShebenPodgotovki;
+            var hkol = Hf - (H1 + H2 + H3 + H4 + Hk);
+            //Вектор по стороне "В"
+            var delta = (Foundation.AllFoundations[foundationTypei].bk - Foundation.AllFoundations[foundationTypei].bk1) * 0.5;
+            var Height_Crossbar = distance + Crossbar.AllCrossbar[crossbarTypeCri].Height * 0.5 + Crossbar.AllCrossbar[crossbarTypeCri].Height * (ri - 1);
+            var level_Crossbar = distance + Crossbar.AllCrossbar[crossbarTypeCri].Height * ri;
+            var delta_Crossbar = level_Crossbar * delta / hkol;
+            var b_Crossbar = Foundation.AllFoundations[foundationTypei].bk1 * 0.5 + delta_Crossbar;
+            var a_Crossbar = Height_Crossbar * e / hkol;
+            //var Vector_Anker = new Vector3d(-a_Crossbar, -(b_Crossbar + Crossbar.AllCrossbar[crossbarTypeCri].FullWidth), (Hf + Hb + Hsh - level_Crossbar));
+            var Vector_AnkerB = new Vector3d(-a_Crossbar, -(b_Crossbar), (Hf + Hb + Hsh - level_Crossbar));
+            //Вектор по стороне "В"
+            //Вектор по стороне "А"
+            var delta_h = Crossbar.AllCrossbar[crossbarTypeCri].FullWidth * Math.Sin(alpha);
+            var deltaA = (Foundation.AllFoundations[foundationTypei].ak - Foundation.AllFoundations[foundationTypei].ak1) * 0.5;
+            var hsech = deltaA * 2 + Foundation.AllFoundations[foundationTypei].ak;
+            var delta_hsech = hsech * Math.Sin(betta) * 0.65;
+            var Height_CrossbarA = distance + Crossbar.AllCrossbar[crossbarTypeCri].Height * 0.5 + (Crossbar.AllCrossbar[crossbarTypeCri].Height) * (ri - 1) - 125 * 0.5 + delta_hsech;
+            var level_CrossbarA = distance + Crossbar.AllCrossbar[crossbarTypeCri].Height * ri + delta_hsech;
+            var delta_CrossbarA = Height_CrossbarA * deltaA / hkol;
+            var delta_e = Height_CrossbarA * e / hkol;
+            var a_CrossbarA = delta_e - delta_CrossbarA - Foundation.AllFoundations[foundationTypei].ak1 * 0.5;
+            //var a_CrossbarA = level_Crossbar * e / hkol + Foundation.AllFoundations[foundationTypei].ak1 * 0.5 + delta_CrossbarA;
+            var Vector_AnkerA = new Vector3d(-a_CrossbarA, (0), (Hf + Hb + Hsh - level_CrossbarA));
+            //Вектор по стороне "А"
+            Vector3d Vector_Anker = new Vector3d();
+            if (m[ai] > 0 && n[ai] == 0) { Vector_Anker = Vector_AnkerB; }
+            else if (m[ai] == 0 && n[ai] > 0) { Vector_Anker = Vector_AnkerA; }
+            else
+            {
+                if ((ri % 2) == 0) { Vector_Anker = Vector_AnkerA; }
+                else { Vector_Anker = Vector_AnkerB; }
+            }
+            return Vector_Anker;
+        }
+    }
+    public class VectorBeamCrossbarStraight
+    {
+        public static Vector3d VectorStraight(FoundationType foundationTypei, CrossbarType crossbarTypeCri, double distance, MainWindowContext Context, int ai, int ri)
+        {
+            int[] m = new int[] { Context.crossbarquantityType1, Context.crossbarquantityType2, Context.crossbarquantityType3, Context.crossbarquantityType4 };
+            int[] n = new int[] { Context.crossbarquantityType1A, Context.crossbarquantityType2A, Context.crossbarquantityType3A, Context.crossbarquantityType4A };
+            var Hf = Foundation.AllFoundations[foundationTypei].hf;
+            var H1 = Foundation.AllFoundations[foundationTypei].h1;
+            var H2 = Foundation.AllFoundations[foundationTypei].h2;
+            var H3 = Foundation.AllFoundations[foundationTypei].h3;
+            var H4 = Foundation.AllFoundations[foundationTypei].h4;
+            var Hk = Foundation.AllFoundations[foundationTypei].hk1;
+            var e = Foundation.AllFoundations[foundationTypei].e;
+            var Hb = Context.HBetonPodgotovki;
+            var Hsh = Context.HShebenPodgotovki;
+
+            var hkol = Hf - (H1 + H2 + H3 + H4 + Hk);
+            //Вектор по стороне "В"
+            var deltaB = (Foundation.AllFoundations[foundationTypei].ak - Foundation.AllFoundations[foundationTypei].ak1) * 0.5;
+            var level_CrossbarB = distance + Crossbar.AllCrossbar[crossbarTypeCri].Height * ri;
+            var delta_CrossbarB = level_CrossbarB * deltaB / hkol;
+            var a_Crossbar = Foundation.AllFoundations[foundationTypei].ak1 * 0.5 + delta_CrossbarB;
+            //Vector3d Vector_Straight = new Vector3d((a_Crossbar + Crossbar.AllCrossbar[crossbarTypeCri].FullWidth), 0, (Hf + Hb + Hsh - level_Crossbar));
+            Vector3d Vector_StraightB = new Vector3d((a_Crossbar), 0, (Hf + Hb + Hsh - level_CrossbarB));
+            //Вектор по стороне "В"
+            //Вектор по стороне "А"
+            var deltaA = (Foundation.AllFoundations[foundationTypei].bk - Foundation.AllFoundations[foundationTypei].bk1) * 0.5;
+            var level_CrossbarA = distance + Crossbar.AllCrossbar[crossbarTypeCri].Height * ri;
+            var delta_CrossbarA = level_CrossbarA * deltaA / hkol;
+            var b_Crossbar = Foundation.AllFoundations[foundationTypei].bk1 * 0.5 + delta_CrossbarA;
+            Vector3d Vector_StraightA = new Vector3d(0, (b_Crossbar), (Hf + Hb + Hsh - level_CrossbarB));
+            //Вектор по стороне "А"
+            Vector3d Vector_Straight = new Vector3d();
+            if (m[ai] > 0 && n[ai] == 0)
+            {
+                Vector_Straight = Vector_StraightB;
+            }
+            else if (m[ai] == 0 && n[ai] > 0)
+            {
+                Vector_Straight = Vector_StraightA;
+            }
+            else
+            {
+                if ((ri % 2) == 0)
+                {
+                    Vector_Straight = Vector_StraightA;
+                }
+                else
+                {
+                    Vector_Straight = Vector_StraightB;
+                }
+            }
+            return Vector_Straight;
+        }
+    }
 }
 
 

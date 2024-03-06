@@ -39,6 +39,7 @@ namespace ACADprogram
         public int n_bolt { get; set; }
         public int Ugol_povorota { get; set; }
         public int Glubina_Zalozhenia { get; set; }
+        public int OverallSize { get; set; }
 
         /// <summary>
         /// Доп. размеры для специальных и составных фундаментов
@@ -98,14 +99,14 @@ namespace ACADprogram
                 FoundationType.F3n_A, new Foundation()
                 {
                     a = 2100,
-                    b=2100,
-                    a1=2040,
-                    b1=2040,
-                    ak=600,
-                    bk=600,
-                    ak1=408,
-                    bk1=400,
-                    h1=100,
+                    b = 2100,
+                    a1 = 2040,
+                    b1 = 2040,
+                    ak = 600,
+                    bk = 600,
+                    ak1 = 408,
+                    bk1 = 400,
+                    h1 = 100,
                     hk1=300,
                     hf=3115,
                     e=660,
@@ -124,6 +125,7 @@ namespace ACADprogram
                     h4=0,
                     a4=0,
                     b4=0,
+                    OverallSize=2100
                 }
             },
             {
@@ -156,6 +158,7 @@ namespace ACADprogram
                     h4=0,
                     a4=0,
                     b4=0,
+                    OverallSize=2400
                 }
             },
             {
@@ -188,6 +191,7 @@ namespace ACADprogram
                     h4=0,
                     a4=0,
                     b4=0,
+                    OverallSize=2700
                 }
             },
             {
@@ -220,6 +224,7 @@ namespace ACADprogram
                     h4=300,
                     a4=1960,
                     b4=700,
+                    OverallSize=2020
                 }
             },
             {
@@ -252,6 +257,7 @@ namespace ACADprogram
                     h4=0,
                     a4=0,
                     b4=0,
+                    OverallSize=2700
                 }
             },
             {
@@ -284,6 +290,7 @@ namespace ACADprogram
                     h4=0,
                     a4=0,
                     b4=0,
+                    OverallSize=2700
                 }
             },
             {
@@ -316,6 +323,7 @@ namespace ACADprogram
                     h4=300,
                     a4=1960,
                     b4=700,
+                    OverallSize=4200
                 }
             },
             {
@@ -348,6 +356,7 @@ namespace ACADprogram
                     h4=300,
                     a4=1960,
                     b4=700,
+                    OverallSize=5200
                 }
             },
             {
@@ -380,6 +389,7 @@ namespace ACADprogram
                     h4=300,
                     a4=1960,
                     b4=700,
+                    OverallSize=4200
                 }
             },
             {
@@ -412,6 +422,7 @@ namespace ACADprogram
                     h4=300,
                     a4=1960,
                     b4=700,
+                    OverallSize=5200
                 }
             },
             {
@@ -443,7 +454,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=1200
                 }
             },
             {
@@ -475,7 +487,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=1500
                 }
             },
             {
@@ -507,7 +520,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=1800
                 }
             },
             {
@@ -539,7 +553,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=2100
                 }
             },
             {
@@ -571,7 +586,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=2100
                 }
             },
             {
@@ -603,7 +619,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=2100
                 }
             },
             {
@@ -635,7 +652,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=2100
                 }
             },
             {
@@ -667,7 +685,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=2400
                 }
             },
             {
@@ -699,7 +718,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=2400
                 }
             },
             {
@@ -731,7 +751,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=2700
                 }
             },
             {
@@ -763,7 +784,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=2700
                 }
             },
             {
@@ -795,7 +817,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=2700
                 }
             },
             {
@@ -827,7 +850,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=2700
                 }
             },
             {
@@ -859,7 +883,8 @@ namespace ACADprogram
                     b3=450,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=2700
                 }
             },
             {
@@ -891,7 +916,8 @@ namespace ACADprogram
                     b3=450,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=2700
                 }
             },
             {
@@ -923,7 +949,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=2700
                 }
             },
             {
@@ -955,7 +982,8 @@ namespace ACADprogram
                     b3=0,
                     h4=0,
                     a4=0,
-                    b4=0
+                    b4=0,
+                    OverallSize=2700
                 }
             },
         };

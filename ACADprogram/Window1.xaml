@@ -469,11 +469,15 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="25" />
-                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="140" />
+                    <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -527,8 +531,17 @@
                 <Label
                     Grid.Row="2"
                     Grid.Column="0"
-                    Content="Введите размер нижнего основания котлована поперек оси ВЛ, мм:"
-                    Foreground="White" />
+                    Content="Дополнительный размер к ширине дна котлована, мм:"
+                    Foreground="White">
+                    <Label.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="150" Source="Resources/Доп размер к низу котлована.jpg" />
+                                <Label Content="Обозначение дополнительного размера к низу котлована" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Label.ToolTip>
+                </Label>
                 <Border
                     Grid.Row="2"
                     Grid.Column="1"
@@ -542,53 +555,23 @@
                         Background="Transparent"
                         BorderThickness="0"
                         Foreground="White"
-                        Text="{Binding LpoperekVL, UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{Binding DopRazmerNizhaKotlovana, UpdateSourceTrigger=PropertyChanged}" />
                 </Border>
-                <Label
-                    Grid.Row="3"
-                    Grid.Column="0"
-                    Content="Введите размер нижнего основания котлована вдоль оси ВЛ, мм:"
-                    Foreground="White" />
-                <Border
-                    Grid.Row="3"
-                    Grid.Column="1"
-                    Margin="0,5,0,5"
-                    VerticalAlignment="Center"
-                    Background="#3f5d6e"
-                    BorderBrush="#3f5d6e"
-                    BorderThickness="1"
-                    CornerRadius="5">
-                    <TextBox
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Foreground="White"
-                        Text="{Binding LvdolVL, UpdateSourceTrigger=PropertyChanged}" />
-                </Border>
-                <Label
-                    Grid.Row="4"
-                    Grid.Column="0"
-                    Content="Введите глубину котлована, мм:"
-                    Foreground="White" />
-                <Border
-                    Grid.Row="4"
-                    Grid.Column="1"
-                    Margin="0,5,0,5"
-                    VerticalAlignment="Center"
-                    Background="#3f5d6e"
-                    BorderBrush="#3f5d6e"
-                    BorderThickness="1"
-                    CornerRadius="5">
-                    <TextBox
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Foreground="White"
-                        Text="{Binding GlubinaKotlovana, UpdateSourceTrigger=PropertyChanged}" />
-                </Border>
+
                 <Label
                     Grid.Row="5"
                     Grid.Column="0"
                     Content="Введите уклон откосов котлована:"
-                    Foreground="White" />
+                    Foreground="White">
+                    <Label.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="150" Source="Resources/Откос котлована.jpg" />
+                                <Label Content="Уклон откосов котлована" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Label.ToolTip>
+                </Label>
                 <Border
                     Grid.Row="5"
                     Grid.Column="1"
@@ -609,8 +592,16 @@
                     Grid.Column="0"
                     Content="Введите уклон откосов области срезаемого грунта:"
                     Foreground="White"
-                    ToolTip="Введите уклон откосов области срезаемого грунта"
-                    ToolTipService.InitialShowDelay="200" />
+                    ToolTipService.InitialShowDelay="200">
+                    <Label.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="150" Source="Resources/Откос срезки.jpg" />
+                                <Label Content="Уклон откосов срезки" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Label.ToolTip>
+                </Label>
                 <Border
                     Grid.Row="6"
                     Grid.Column="1"
@@ -630,7 +621,16 @@
                     Grid.Row="7"
                     Grid.Column="0"
                     Content="Введите уклон откосов области насыпи:"
-                    Foreground="White" />
+                    Foreground="White">
+                    <Label.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="150" Source="Resources/Откос насыпи.jpg" />
+                                <Label Content="Уклон откосов насыпи" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Label.ToolTip>
+                </Label>
                 <Border
                     Grid.Row="7"
                     Grid.Column="1"
@@ -650,7 +650,16 @@
                     Grid.Row="8"
                     Grid.Column="0"
                     Content="Введите дополнительное удлинение размеров насыпи:"
-                    Foreground="White" />
+                    Foreground="White">
+                    <Label.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="150" Source="Resources/Доп размер к насыпи.jpg" />
+                                <Label Content="Дополнительный размер к насыпи" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Label.ToolTip>
+                </Label>
                 <Border
                     Grid.Row="8"
                     Grid.Column="1"
@@ -670,7 +679,16 @@
                     Grid.Row="9"
                     Grid.Column="0"
                     Content="Высота от поверхности котлована до рельефа поперек оси ВЛ (слева от оси ВЛ):"
-                    Foreground="White" />
+                    Foreground="White">
+                    <Label.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Срезка-Насыпь_Страница_1_1.jpg" />
+                                <Label Content="Место положения снятия высоты относительно базы опоры" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Label.ToolTip>
+                </Label>
                 <Border
                     Grid.Row="9"
                     Grid.Column="1"
@@ -690,7 +708,16 @@
                     Grid.Row="10"
                     Grid.Column="0"
                     Content="Высота от поверхности котлована до рельефа поперек оси ВЛ (справа от оси ВЛ):"
-                    Foreground="White" />
+                    Foreground="White">
+                    <Label.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Срезка-Насыпь_Страница_2_1.jpg" />
+                                <Label Content="Место положения снятия высоты относительно базы опоры" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Label.ToolTip>
+                </Label>
                 <Border
                     Grid.Row="10"
                     Grid.Column="1"
@@ -710,7 +737,16 @@
                     Grid.Row="11"
                     Grid.Column="0"
                     Content="Высота от поверхности котлована до рельефа вдоль оси ВЛ (снизу от оси Траверс):"
-                    Foreground="White" />
+                    Foreground="White">
+                    <Label.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Срезка-Насыпь_Страница_3_1.jpg" />
+                                <Label Content="Место положения снятия высоты относительно базы опоры" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Label.ToolTip>
+                </Label>
                 <Border
                     Grid.Row="11"
                     Grid.Column="1"
@@ -730,7 +766,16 @@
                     Grid.Row="12"
                     Grid.Column="0"
                     Content="Высота от поверхности котлована до рельефа вдоль оси ВЛ (сверху от оси Траверс):"
-                    Foreground="White" />
+                    Foreground="White">
+                    <Label.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Срезка-Насыпь_Страница_4_1.jpg" />
+                                <Label Content="Место положения снятия высоты относительно базы опоры" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Label.ToolTip>
+                </Label>
                 <Border
                     Grid.Row="12"
                     Grid.Column="1"
@@ -882,7 +927,8 @@
                     Grid.Row="21"
                     Grid.Column="0"
                     Content="Изменение отметки котлована, мм:"
-                    Foreground="White" />
+                    Foreground="White"
+                    ToolTip="Для понижения котлована вводится отрицательное значение, для повышения (банкетки) - положительное значение" />
                 <Border
                     Grid.Row="21"
                     Grid.Column="1"
@@ -901,6 +947,7 @@
                 <Label
                     Grid.Row="1"
                     Grid.Column="3"
+                    Grid.ColumnSpan="2"
                     Margin="0,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
@@ -912,15 +959,16 @@
                     Height="25"
                     VerticalAlignment="Center"
                     Background="BurlyWood"
-                    FontFamily="ISOCPEUR"
                     BorderThickness="0"
                     DisplayMemberPath="Name"
+                    FontFamily="ISOCPEUR"
                     ItemsSource="{x:Static local:Opora.oporanames}"
                     SelectedValue="{Binding SelectedType}"
                     SelectedValuePath="Type" />
                 <Label
                     Grid.Row="4"
                     Grid.Column="3"
+                    Grid.ColumnSpan="2"
                     Margin="0,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
@@ -929,6 +977,7 @@
                 <ComboBox
                     Grid.Row="5"
                     Grid.Column="3"
+                    Grid.ColumnSpan="3"
                     Height="25"
                     VerticalAlignment="Center"
                     Background="BurlyWood"
@@ -937,41 +986,82 @@
                     FontFamily="ISOCPEUR"
                     ItemsSource="{x:Static local:Foundation.foundationNames}"
                     SelectedValue="{Binding SelectedType1}"
-                    SelectedValuePath="Type" />
+                    SelectedValuePath="Type">
+                    <ComboBox.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Binder1_Страница_1_1.jpg" />
+                                <Label Content="Положение фундамента" />
+                            </StackPanel>
+                        </ToolTip>
+                    </ComboBox.ToolTip>
+                </ComboBox>
+
 
                 <ComboBox
                     Grid.Row="6"
                     Grid.Column="3"
+                    Grid.ColumnSpan="3"
                     Height="25"
                     Background="BurlyWood"
                     DisplayMemberPath="Name"
                     FontFamily="ISOCPEUR"
                     ItemsSource="{x:Static local:Foundation.foundationNames}"
                     SelectedValue="{Binding SelectedType2}"
-                    SelectedValuePath="Type" />
+                    SelectedValuePath="Type">
+                    <ComboBox.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Binder1_Страница_2_1.jpg" />
+                                <Label Content="Положение фундамента" />
+                            </StackPanel>
+                        </ToolTip>
+                    </ComboBox.ToolTip>
+                </ComboBox>
                 <ComboBox
                     Grid.Row="7"
                     Grid.Column="3"
+                    Grid.ColumnSpan="3"
                     Height="25"
                     Background="BurlyWood"
                     DisplayMemberPath="Name"
                     FontFamily="ISOCPEUR"
                     ItemsSource="{x:Static local:Foundation.foundationNames}"
                     SelectedValue="{Binding SelectedType3}"
-                    SelectedValuePath="Type" />
+                    SelectedValuePath="Type">
+                    <ComboBox.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Binder1_Страница_3_1.jpg" />
+                                <Label Content="Положение фундамента" />
+                            </StackPanel>
+                        </ToolTip>
+                    </ComboBox.ToolTip>
+                </ComboBox>
                 <ComboBox
                     Grid.Row="8"
                     Grid.Column="3"
+                    Grid.ColumnSpan="3"
                     Height="25"
                     Background="BurlyWood"
-                    FontFamily="ISOCPEUR"
                     DisplayMemberPath="Name"
+                    FontFamily="ISOCPEUR"
                     ItemsSource="{x:Static local:Foundation.foundationNames}"
                     SelectedValue="{Binding SelectedType4}"
-                    SelectedValuePath="Type" />
+                    SelectedValuePath="Type">
+                    <ComboBox.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Binder1_Страница_4_1.jpg" />
+                                <Label Content="Положение фундамента" />
+                            </StackPanel>
+                        </ToolTip>
+                    </ComboBox.ToolTip>
+                </ComboBox>
                 <Label
                     Grid.Row="9"
                     Grid.Column="3"
+                    Grid.ColumnSpan="3"
                     Margin="0,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
@@ -980,6 +1070,7 @@
                 <Label
                     Grid.Row="10"
                     Grid.Column="3"
+                    Grid.ColumnSpan="2"
                     Margin="0,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
@@ -987,7 +1078,7 @@
                     Foreground="white" />
                 <Border
                     Grid.Row="10"
-                    Grid.Column="4"
+                    Grid.Column="5"
                     Margin="0,5,0,5"
                     VerticalAlignment="Center"
                     Background="#3f5d6e"
@@ -1003,14 +1094,24 @@
                 <Label
                     Grid.Row="11"
                     Grid.Column="3"
+                    Grid.ColumnSpan="2"
                     Margin="0,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
                     Content="Свесы бетонной подготовки, мм:"
-                    Foreground="white" />
+                    Foreground="white">
+                    <Label.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="200" Source="Resources/Свесы.jpg" />
+                                <Label Content="Обозначение размера свеса подготовки" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Label.ToolTip>
+                </Label>
                 <Border
                     Grid.Row="11"
-                    Grid.Column="4"
+                    Grid.Column="5"
                     Margin="0,5,0,5"
                     VerticalAlignment="Center"
                     Background="#3f5d6e"
@@ -1026,6 +1127,7 @@
                 <Label
                     Grid.Row="12"
                     Grid.Column="3"
+                    Grid.ColumnSpan="3"
                     Margin="0,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
@@ -1034,6 +1136,7 @@
                 <Label
                     Grid.Row="13"
                     Grid.Column="3"
+                    Grid.ColumnSpan="3"
                     Margin="0,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
@@ -1041,7 +1144,7 @@
                     Foreground="white" />
                 <Border
                     Grid.Row="13"
-                    Grid.Column="4"
+                    Grid.Column="5"
                     Margin="0,5,0,5"
                     VerticalAlignment="Center"
                     Background="#3f5d6e"
@@ -1057,14 +1160,24 @@
                 <Label
                     Grid.Row="14"
                     Grid.Column="3"
+                    Grid.ColumnSpan="2"
                     Margin="0,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
                     Content="Свесы щебёночной подготовки, мм:"
-                    Foreground="white" />
+                    Foreground="white">
+                    <Label.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="200" Source="Resources/Свесы.jpg" />
+                                <Label Content="Обозначение размера свеса подготовки" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Label.ToolTip>
+                </Label>
                 <Border
                     Grid.Row="14"
-                    Grid.Column="4"
+                    Grid.Column="5"
                     Margin="0,5,0,5"
                     VerticalAlignment="Center"
                     Background="#3f5d6e"
@@ -1077,6 +1190,346 @@
                         Foreground="White"
                         Text="{Binding SvesaShebenPod, UpdateSourceTrigger=PropertyChanged}" />
                 </Border>
+                <Label
+                    Grid.Row="15"
+                    Grid.Column="3"
+                    Margin="0,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Content="Выбор типа ригеля:"
+                    Foreground="white" />
+                <Label
+                    Grid.Row="15"
+                    Grid.Column="4"
+                    Margin="0,0,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Content="по B,шт.:"
+                    Foreground="white"
+                    ToolTip="Количество устанавливаемых ригелей вдоль стороны В" />
+                <Label
+                    Grid.Row="15"
+                    Grid.Column="5"
+                    Margin="0,0,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Content="по A,шт.:"
+                    Foreground="white"
+                    ToolTip="Количество устанавливаемых ригелей вдоль стороны А" />
+                <ComboBox
+                    Grid.Row="16"
+                    Grid.Column="3"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="Name"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{x:Static local:Crossbar.crossbarnames}"
+                    SelectedValue="{Binding SelectedTypeCr1}"
+                    SelectedValuePath="Type">
+                    <ComboBox.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Ригели_Страница_1.jpg" />
+                                <Label Content="Обозначение положения ригеля" />
+                            </StackPanel>
+                        </ToolTip>
+                    </ComboBox.ToolTip>
+                </ComboBox>
+                <ComboBox
+                    Grid.Row="17"
+                    Grid.Column="3"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="Name"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{x:Static local:Crossbar.crossbarnames}"
+                    SelectedValue="{Binding SelectedTypeCr2}"
+                    SelectedValuePath="Type">
+                    <ComboBox.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Ригели_Страница_2.jpg" />
+                                <Label Content="Обозначение положения ригеля" />
+                            </StackPanel>
+                        </ToolTip>
+                    </ComboBox.ToolTip>
+                </ComboBox>
+                <ComboBox
+                    Grid.Row="18"
+                    Grid.Column="3"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="Name"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{x:Static local:Crossbar.crossbarnames}"
+                    SelectedValue="{Binding SelectedTypeCr3}"
+                    SelectedValuePath="Type">
+                    <ComboBox.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Ригели_Страница_3.jpg" />
+                                <Label Content="Обозначение положения ригеля" />
+                            </StackPanel>
+                        </ToolTip>
+                    </ComboBox.ToolTip>
+                </ComboBox>
+                <ComboBox
+                    Grid.Row="19"
+                    Grid.Column="3"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="Name"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{x:Static local:Crossbar.crossbarnames}"
+                    SelectedValue="{Binding SelectedTypeCr4}"
+                    SelectedValuePath="Type">
+                    <ComboBox.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Ригели_Страница_4.jpg" />
+                                <Label Content="Обозначение положения ригеля" />
+                            </StackPanel>
+                        </ToolTip>
+                    </ComboBox.ToolTip>
+                </ComboBox>
+                <Label
+                    Grid.Row="20"
+                    Grid.Column="3"
+                    Grid.ColumnSpan="2"
+                    Margin="0,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Content="Высота крепления ригеля:"
+                    Foreground="white">
+                    <Label.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Высота ригеля.jpg" />
+                                <Label Content="Обозначение размера высоты установки ригеля" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Label.ToolTip>
+                </Label>
+                <ComboBox
+                    Grid.Row="21"
+                    Grid.Column="3"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="lebel"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{Binding MainBeams}"
+                    SelectedIndex="0"
+                    SelectedItem="{Binding SelectedBeam1}">
+                    <ComboBox.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Ригели_Страница_4.jpg" />
+                                <Label Content="Наименование балки и положение" />
+                            </StackPanel>
+                        </ToolTip>
+                    </ComboBox.ToolTip>
+                </ComboBox>
+                <ComboBox
+                    Grid.Row="22"
+                    Grid.Column="3"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="lebel"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{Binding MainBeams}"
+                    SelectedIndex="0"
+                    SelectedItem="{Binding SelectedBeam2}">
+                    <ComboBox.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Ригели_Страница_4.jpg" />
+                                <Label Content="Наименование балки и положение" />
+                            </StackPanel>
+                        </ToolTip>
+                    </ComboBox.ToolTip>
+                </ComboBox>
+                <ComboBox
+                    Grid.Row="23"
+                    Grid.Column="3"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="lebel"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{Binding MainBeams}"
+                    SelectedIndex="0"
+                    SelectedItem="{Binding SelectedBeam3}">
+                    <ComboBox.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Ригели_Страница_4.jpg" />
+                                <Label Content="Наименование балки и положение" />
+                            </StackPanel>
+                        </ToolTip>
+                    </ComboBox.ToolTip>
+                </ComboBox>
+                <ComboBox
+                    Grid.Row="24"
+                    Grid.Column="3"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="lebel"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{Binding MainBeams}"
+                    SelectedIndex="0"
+                    SelectedItem="{Binding SelectedBeam4}">
+                    <ComboBox.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <Image Height="300" Source="Resources/Ригели_Страница_4.jpg" />
+                                <Label Content="Наименование балки и положение" />
+                            </StackPanel>
+                        </ToolTip>
+                    </ComboBox.ToolTip>
+                </ComboBox>
+                <Border
+                    Grid.Row="16"
+                    Grid.Column="4"
+                    Height="25"
+                    Margin="0,0,0,0"
+                    VerticalAlignment="Center"
+                    Background="#3f5d6e"
+                    BorderBrush="#3f5d6e"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <TextBox
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="White"
+                        Text="{Binding crossbarquantityType1, UpdateSourceTrigger=PropertyChanged}" />
+                </Border>
+                <Border
+                    Grid.Row="17"
+                    Grid.Column="4"
+                    Height="25"
+                    Margin="0,0,0,0"
+                    VerticalAlignment="Center"
+                    Background="#3f5d6e"
+                    BorderBrush="#3f5d6e"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <TextBox
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="White"
+                        Text="{Binding crossbarquantityType2, UpdateSourceTrigger=PropertyChanged}" />
+                </Border>
+                <Border
+                    Grid.Row="18"
+                    Grid.Column="4"
+                    Height="25"
+                    Margin="0,0,0,0"
+                    VerticalAlignment="Center"
+                    Background="#3f5d6e"
+                    BorderBrush="#3f5d6e"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <TextBox
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="White"
+                        Text="{Binding crossbarquantityType3, UpdateSourceTrigger=PropertyChanged}" />
+                </Border>
+                <Border
+                    Grid.Row="19"
+                    Grid.Column="4"
+                    Height="25"
+                    Margin="0,0,0,0"
+                    VerticalAlignment="Center"
+                    Background="#3f5d6e"
+                    BorderBrush="#3f5d6e"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <TextBox
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="White"
+                        Text="{Binding crossbarquantityType4, UpdateSourceTrigger=PropertyChanged}" />
+                </Border>
+                <Border
+                    Grid.Row="16"
+                    Grid.Column="5"
+                    Height="25"
+                    Margin="0,0,0,0"
+                    VerticalAlignment="Center"
+                    Background="#3f5d6e"
+                    BorderBrush="#3f5d6e"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <TextBox
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="White"
+                        Text="{Binding crossbarquantityType1A, UpdateSourceTrigger=PropertyChanged}" />
+                </Border>
+                <Border
+                    Grid.Row="17"
+                    Grid.Column="5"
+                    Height="25"
+                    Margin="0,0,0,0"
+                    VerticalAlignment="Center"
+                    Background="#3f5d6e"
+                    BorderBrush="#3f5d6e"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <TextBox
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="White"
+                        Text="{Binding crossbarquantityType2A, UpdateSourceTrigger=PropertyChanged}" />
+                </Border>
+                <Border
+                    Grid.Row="18"
+                    Grid.Column="5"
+                    Height="25"
+                    Margin="0,0,0,0"
+                    VerticalAlignment="Center"
+                    Background="#3f5d6e"
+                    BorderBrush="#3f5d6e"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <TextBox
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="White"
+                        Text="{Binding crossbarquantityType3A, UpdateSourceTrigger=PropertyChanged}" />
+                </Border>
+                <Border
+                    Grid.Row="19"
+                    Grid.Column="5"
+                    Height="25"
+                    Margin="0,0,0,0"
+                    VerticalAlignment="Center"
+                    Background="#3f5d6e"
+                    BorderBrush="#3f5d6e"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <TextBox
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="White"
+                        Text="{Binding crossbarquantityType4A, UpdateSourceTrigger=PropertyChanged}" />
+                </Border>
+                <Border
+                    Grid.Row="20"
+                    Grid.Column="5"
+                    Margin="0,5,0,5"
+                    VerticalAlignment="Center"
+                    Background="#3f5d6e"
+                    BorderBrush="#3f5d6e"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <TextBox
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="White"
+                        Text="{Binding crossbarlocation, UpdateSourceTrigger=PropertyChanged}" />
+                </Border>
+
             </Grid>
             <StackPanel Grid.Column="4">
                 <Label

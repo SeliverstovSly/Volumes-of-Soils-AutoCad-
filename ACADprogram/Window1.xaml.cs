@@ -1,7 +1,9 @@
-﻿using System;
+﻿using ACADprogram;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Threading;
+using static ACADprogram.Crossbar;
 
 namespace ACADprogram
 {
@@ -39,17 +41,49 @@ namespace ACADprogram
         public int IGE5 { get; set; } = 1900;
         public int IGE6 { get; set; } = 0;
         public int OtmetkaPonizh { get; set; } = 0;
-        public int HShebenPodgotovki { get; set; } = 500;
-        public int HBetonPodgotovki { get; set; } = 200;
-        public int SvesaBetonPod { get; set; } = 150;
-        public int SvesaShebenPod { get; set; } = 150;
-        public int DopRazmerNizhaKotlovana { get; set; } = 0;
+        public int HShebenPodgotovki { get; set; }
+        public int HBetonPodgotovki { get; set; }
+        public int SvesaBetonPod { get; set; }
+        public int SvesaShebenPod { get; set; }
+        public int DopRazmerNizhaKotlovana { get; set; }
+        public int crossbarlocation { get; set; } = 500;
+        public int Beamlocation { get; set; } = 500;
 
-        public FoundationType SelectedType1 { get; set; } = FoundationType.F2n_2;
-        public FoundationType SelectedType2 { get; set; } = FoundationType.F3n_2;
-        public FoundationType SelectedType3 { get; set; } = FoundationType.F1n_2;
-        public FoundationType SelectedType4 { get; set; } = FoundationType.FS1n_2;
+        public Angles<int> CrossbarQuantitiesA { get; } = new Angles<int>();
+        public Angles<int> CrossbarQuantitiesB { get; } = new Angles<int>();
+
+
+        public int crossbarquantityType1 { get; set; }
+        public int crossbarquantityType2 { get; set; }
+        public int crossbarquantityType3 { get; set; }
+        public int crossbarquantityType4 { get; set; }
+        public int crossbarquantityType1A { get; set; }
+        public int crossbarquantityType2A { get; set; }
+        public int crossbarquantityType3A { get; set; }
+        public int crossbarquantityType4A { get; set; }
+
+        //public bool dddd { get; set; } = true;
+        public Angles<FoundationType> SelectedTypes { get; } = new Angles<FoundationType>();
+        public FoundationType SelectedType1 { get; set; } = FoundationType.F3n_A;
+        public FoundationType SelectedType2 { get; set; } = FoundationType.F3n_A;
+        public FoundationType SelectedType3 { get; set; } = FoundationType.F3n_A;
+        public FoundationType SelectedType4 { get; set; } = FoundationType.F3n_A;
+        public int FoundationQuantity1 { get; set; } = 1;
+        public int FoundationQuantity2 { get; set; } = 1;
+        public int FoundationQuantity3 { get; set; } = 1;
+        public int FoundationQuantity4 { get; set; } = 1;
         public OporaType SelectedType { get; set; } = OporaType.U500n_1_12;
+        public CrossbarType SelectedTypeCr1 { get; set; } = CrossbarType.R1n;
+        public CrossbarType SelectedTypeCr2 { get; set; } = CrossbarType.R1n;
+        public CrossbarType SelectedTypeCr3 { get; set; } = CrossbarType.R1n;
+        public CrossbarType SelectedTypeCr4 { get; set; } = CrossbarType.R1n;
+
+        public ObservableCollection<B5n> MainBeams { get; } = new ObservableCollection<B5n>() {new B1n(), new B2n(), new B3n(), new B4n_250(), new B4n_350(), new B5n() };
+        public ObservableCollection<B5n> SecondaryBeams { get; } = new ObservableCollection<B5n>() { new B1n(), new B2n(), new B3n() };
+        public B5n SelectedBeam1 { get; set; }
+        public B5n SelectedBeam2 { get; set; }
+        public B5n SelectedBeam3 { get; set; }
+        public B5n SelectedBeam4 { get; set; }
 
         public ObservableCollection<VolumeInfo> Volumes { get; set; } = new ObservableCollection<VolumeInfo>();
         public ObservableCollection<VolumeInfo> VolumesSR { get; set; } = new ObservableCollection<VolumeInfo>();
@@ -69,7 +103,9 @@ namespace ACADprogram
                 {
                     ExceptionMessage = "StartCommand";
                     try
-                    {                        
+                    {
+                        //if(dddd)
+                        //    SelectedType4 = SelectedType3 = SelectedType2 = SelectedType1;
                         ACAD.Program(this);
                     }
                     catch (Exception e)
@@ -98,4 +134,30 @@ namespace ACADprogram
         public string Description { get; set; }
         public double Value { get; set; }
     }
+}
+
+public class Angles<T>
+{
+    public T Angle1
+    {
+        get => collection[0];
+        set => collection[0] = value;
+    }
+    public T Angle2
+    {
+        get => collection[1];
+        set => collection[1] = value;
+    }
+    public T Angle3
+    {
+        get => collection[2];
+        set => collection[2] = value;
+    }
+    public T Angle4
+    {
+        get => collection[3];
+        set => collection[3] = value;
+    }
+
+    public readonly T[] collection = new T[4];
 }

@@ -12,28 +12,6 @@ namespace ACADprogram
     }
     public class Opora
     {
-        public static void dfsfsf()
-        {
-            var o = new Opora()
-            {
-                Baza_A = 1,
-                Baza_B = 2,
-                Name = "++++"
-            };
-
-            var str = JsonConvert.SerializeObject(o);
-
-            var EntityiesInfo = @"C:\Users\seliverstov\Desktop\EntityiesInfo.Json";
-
-
-            File.WriteAllText(EntityiesInfo, str);
-            var json = File.ReadAllText(EntityiesInfo);
-
-            var newO = JsonConvert.DeserializeObject<Opora>(json);
-
-            MessageBox.Show($"{newO}---{newO?.Baza_A}---{newO?.Baza_B}---{newO?.Name}");
-        }
-
         public string Name { get; set; }
         public int Baza_A { get; set; }
         public int Baza_B { get; set; }
