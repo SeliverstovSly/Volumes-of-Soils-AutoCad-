@@ -117,7 +117,7 @@ namespace ACADprogram
                                 Lk_dopB[i] = 0.5 * Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].a, 2) + Math.Pow(Foundation.AllFoundations[e].OverallSize, 2)) * Math.Cos(UgolProekc) + Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].e, 2) * 0.5) + Context.SvesaBetonPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.SvesaShebenPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.HShebenPodgotovki * 1 / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.DopRazmerNizhaKotlovana;
                             }
                             break;
-                            case 2:
+                            case 2: 
                             var f = Beamtype[i];
                             var L2foundation = (Foundation.AllFoundations[e].a * 0.5 + Foundation.AllFoundations[e].e) * 2 + f.LB;
                             Lk_dopA[i] = L2foundation * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
