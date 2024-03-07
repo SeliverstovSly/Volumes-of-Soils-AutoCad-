@@ -78,12 +78,22 @@ namespace ACADprogram
         public CrossbarType SelectedTypeCr3 { get; set; } = CrossbarType.R1n;
         public CrossbarType SelectedTypeCr4 { get; set; } = CrossbarType.R1n;
 
-        public ObservableCollection<B5n> MainBeams { get; } = new ObservableCollection<B5n>() {new B1n(), new B2n(), new B3n(), new B4n_250(), new B4n_350(), new B5n() };
+        public ObservableCollection<B5n> MainBeams { get; } = new ObservableCollection<B5n>() { new B4n_250(), new B4n_350(), new B5n() };
         public ObservableCollection<B5n> SecondaryBeams { get; } = new ObservableCollection<B5n>() { new B1n(), new B2n(), new B3n() };
         public B5n SelectedBeam1 { get; set; }
         public B5n SelectedBeam2 { get; set; }
         public B5n SelectedBeam3 { get; set; }
         public B5n SelectedBeam4 { get; set; }
+        public B5n SelectedMainBeam1 {  get; set; }
+        public B5n SelectedMainBeam2 { get; set; }
+        public B5n SelectedMainBeam3 { get; set; }
+        public B5n SelectedMainBeam4 { get; set; }
+
+        public ObservableCollection<FoundationBlock> FBlock { get; } = new ObservableCollection<FoundationBlock>() { new OneFoundation(), new TwoFoundation(), new FourFoundation() };
+        public FoundationBlock SelectedBlock1 { get; set; }
+        public FoundationBlock SelectedBlock2 { get; set; }
+        public FoundationBlock SelectedBlock3 { get; set; }
+        public FoundationBlock SelectedBlock4 { get; set; }
 
         public ObservableCollection<VolumeInfo> Volumes { get; set; } = new ObservableCollection<VolumeInfo>();
         public ObservableCollection<VolumeInfo> VolumesSR { get; set; } = new ObservableCollection<VolumeInfo>();

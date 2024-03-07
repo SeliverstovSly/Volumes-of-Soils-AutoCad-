@@ -965,6 +965,50 @@
                     ItemsSource="{x:Static local:Opora.oporanames}"
                     SelectedValue="{Binding SelectedType}"
                     SelectedValuePath="Type" />
+                <ComboBox
+                    Grid.Row="5"
+                    Grid.Column="4"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="lebel"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{Binding FBlock}"
+                    SelectedIndex="0"
+                    SelectedItem="{Binding SelectedBlock1}">
+                </ComboBox>
+                <ComboBox
+                    Grid.Row="6"
+                    Grid.Column="4"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="lebel"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{Binding FBlock}"
+                    SelectedIndex="0"
+                    SelectedItem="{Binding SelectedBlock2}">
+                </ComboBox>
+                <ComboBox
+                    Grid.Row="7"
+                    Grid.Column="4"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="lebel"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{Binding FBlock}"
+                    SelectedIndex="0"
+                    SelectedItem="{Binding SelectedBlock3}">
+                </ComboBox>
+                <ComboBox
+                    Grid.Row="8"
+                    Grid.Column="4"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="lebel"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{Binding FBlock}"
+                    SelectedIndex="0"
+                    SelectedItem="{Binding SelectedBlock4}">                    
+                </ComboBox>
                 <Label
                     Grid.Row="4"
                     Grid.Column="3"
@@ -977,7 +1021,7 @@
                 <ComboBox
                     Grid.Row="5"
                     Grid.Column="3"
-                    Grid.ColumnSpan="3"
+                    Grid.ColumnSpan="1"
                     Height="25"
                     VerticalAlignment="Center"
                     Background="BurlyWood"
@@ -1001,7 +1045,7 @@
                 <ComboBox
                     Grid.Row="6"
                     Grid.Column="3"
-                    Grid.ColumnSpan="3"
+                    Grid.ColumnSpan="1"
                     Height="25"
                     Background="BurlyWood"
                     DisplayMemberPath="Name"
@@ -1021,7 +1065,7 @@
                 <ComboBox
                     Grid.Row="7"
                     Grid.Column="3"
-                    Grid.ColumnSpan="3"
+                    Grid.ColumnSpan="1"
                     Height="25"
                     Background="BurlyWood"
                     DisplayMemberPath="Name"
@@ -1041,7 +1085,7 @@
                 <ComboBox
                     Grid.Row="8"
                     Grid.Column="3"
-                    Grid.ColumnSpan="3"
+                    Grid.ColumnSpan="1"
                     Height="25"
                     Background="BurlyWood"
                     DisplayMemberPath="Name"
@@ -1317,17 +1361,9 @@
                     Background="BurlyWood"
                     DisplayMemberPath="lebel"
                     FontFamily="ISOCPEUR"
-                    ItemsSource="{Binding MainBeams}"
+                    ItemsSource="{Binding SecondaryBeams}"
                     SelectedIndex="0"
                     SelectedItem="{Binding SelectedBeam1}">
-                    <ComboBox.ToolTip>
-                        <ToolTip>
-                            <StackPanel>
-                                <Image Height="300" Source="Resources/Ригели_Страница_4.jpg" />
-                                <Label Content="Наименование балки и положение" />
-                            </StackPanel>
-                        </ToolTip>
-                    </ComboBox.ToolTip>
                 </ComboBox>
                 <ComboBox
                     Grid.Row="22"
@@ -1336,37 +1372,21 @@
                     Background="BurlyWood"
                     DisplayMemberPath="lebel"
                     FontFamily="ISOCPEUR"
-                    ItemsSource="{Binding MainBeams}"
+                    ItemsSource="{Binding SecondaryBeams}"
                     SelectedIndex="0"
                     SelectedItem="{Binding SelectedBeam2}">
-                    <ComboBox.ToolTip>
-                        <ToolTip>
-                            <StackPanel>
-                                <Image Height="300" Source="Resources/Ригели_Страница_4.jpg" />
-                                <Label Content="Наименование балки и положение" />
-                            </StackPanel>
-                        </ToolTip>
-                    </ComboBox.ToolTip>
                 </ComboBox>
-                <ComboBox
+                    <ComboBox
                     Grid.Row="23"
                     Grid.Column="3"
                     Height="25"
                     Background="BurlyWood"
                     DisplayMemberPath="lebel"
                     FontFamily="ISOCPEUR"
-                    ItemsSource="{Binding MainBeams}"
+                    ItemsSource="{Binding SecondaryBeams}"
                     SelectedIndex="0"
                     SelectedItem="{Binding SelectedBeam3}">
-                    <ComboBox.ToolTip>
-                        <ToolTip>
-                            <StackPanel>
-                                <Image Height="300" Source="Resources/Ригели_Страница_4.jpg" />
-                                <Label Content="Наименование балки и положение" />
-                            </StackPanel>
-                        </ToolTip>
-                    </ComboBox.ToolTip>
-                </ComboBox>
+                    </ComboBox>
                 <ComboBox
                     Grid.Row="24"
                     Grid.Column="3"
@@ -1374,17 +1394,53 @@
                     Background="BurlyWood"
                     DisplayMemberPath="lebel"
                     FontFamily="ISOCPEUR"
-                    ItemsSource="{Binding MainBeams}"
+                    ItemsSource="{Binding SecondaryBeams}"
                     SelectedIndex="0"
                     SelectedItem="{Binding SelectedBeam4}">
-                    <ComboBox.ToolTip>
-                        <ToolTip>
-                            <StackPanel>
-                                <Image Height="300" Source="Resources/Ригели_Страница_4.jpg" />
-                                <Label Content="Наименование балки и положение" />
-                            </StackPanel>
-                        </ToolTip>
-                    </ComboBox.ToolTip>
+                </ComboBox>
+                <ComboBox
+                    Grid.Row="21"
+                    Grid.Column="4"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="lebel"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{Binding MainBeams}"
+                    SelectedIndex="0"
+                    SelectedItem="{Binding SelectedMainBeam1}">
+                </ComboBox>
+                <ComboBox
+                    Grid.Row="22"
+                    Grid.Column="4"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="lebel"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{Binding MainBeams}"
+                    SelectedIndex="0"
+                    SelectedItem="{Binding SelectedMainBeam2}">
+                </ComboBox>
+                <ComboBox
+                    Grid.Row="23"
+                    Grid.Column="4"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="lebel"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{Binding MainBeams}"
+                    SelectedIndex="0"
+                    SelectedItem="{Binding SelectedMainBeam3}">
+                </ComboBox>
+                <ComboBox
+                    Grid.Row="24"
+                    Grid.Column="4"
+                    Height="25"
+                    Background="BurlyWood"
+                    DisplayMemberPath="lebel"
+                    FontFamily="ISOCPEUR"
+                    ItemsSource="{Binding MainBeams}"
+                    SelectedIndex="0"
+                    SelectedItem="{Binding SelectedMainBeam4}">
                 </ComboBox>
                 <Border
                     Grid.Row="16"

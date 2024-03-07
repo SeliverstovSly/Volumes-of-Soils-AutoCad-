@@ -42,6 +42,7 @@ namespace ACADprogram
         public virtual double diametrD2_hole { get; set; } = 58;  //Диаметр отверстий в детали 2
         public virtual double H { get; set; } = 685; //отметка детали 1
         public virtual double d6_rebro { get; set; } = 455; //расстояние между крайними рёбрами
+        public virtual double Hbeam { get; set; } = 735; //высота балки
 
         protected virtual void BuildDetal1(out Solid3d d1_solid, double d1a, double d1b, double d1a1, double d1t, double d3t)
         {
@@ -434,7 +435,7 @@ namespace ACADprogram
         public override double d2b { get; set; } = 490; //Ширина детали 2
         public override double d2a1 { get; set; } = 450; // Длина ступени детали 2
         public override double d2t { get; set; } = 40; // Толщина детали 2
-        public override double l { get; set; } = -820;  //Плечо перемещения детали 2
+        public override double l { get; set; } = -850;  //Плечо перемещения детали 2
         public override double a { get; set; } = 650;   //Длина детели 3
         public override double d3b { get; set; } = 530; //Ширина детали 3
         public override double d3t { get; set; } = 20; //толщина детали 3
@@ -455,6 +456,7 @@ namespace ACADprogram
         public override double diametrD2_hole { get; set; } = 44;  //Диаметр отверстий в детали 2
         public virtual double d8_vect { get; set; } = 847.5; //плечо перемещения детали 8
         public override double d6_rebro { get; set; } = 455; //расстояние между крайними рёбрами деталь 6 и 7
+        public override double Hbeam { get; set; } = 500; //высота балки
         protected virtual void BuildDetal1_vectorHole2(in Solid3d d1_S, double H, out Solid3d d1_S2, double diametr_hole)
         {
             //отверстия в детале 1
@@ -491,6 +493,7 @@ namespace ACADprogram
             var hole_solid = new Solid3d();
             hole_solid.Extrude(d2_region, 100, 0);
             Vector3d[] hole_pt;
+            d2_solid.TransformBy(Matrix3d.Displacement(new Vector3d(-20, 0, 0)));
             hole_pt = new Vector3d[3]
             {
                 new Vector3d(-177, -0, 0),
@@ -629,7 +632,7 @@ namespace ACADprogram
     {
         public override string lebel { get; set; } = "Б2н";
         public override double LB { get; set; } = 1400; //фундаментная база балки - расстояние между фундаментами
-        public override double l { get; set; } = -670;  //Плечо перемещения детали 2
+        public override double l { get; set; } = -700;  //Плечо перемещения детали 2
         public override double a { get; set; } = 500;   //Длина детели 3
         public override double l1 { get; set; } = -620; //Плечо перемещения детали 3
         public override double a1 { get; set; } = 790;  //Длина детали 4
@@ -690,6 +693,7 @@ namespace ACADprogram
             var d2_pl2 = new VirtualPolyline3d8pt(d2_pt[0], d2_pt[1], d2_pt[2], d2_pt[3], d2_pt[4], d2_pt[5], d2_pt[6], d2_pt[7]);
             d2_pl2.Move(new Vector3d(0, 0, d2t));
             d2_solid = VirtualLoftSolid.loftSolidBuild(d2_pl1.Gets(), d2_pl2.Gets());
+            d2_solid.TransformBy(Matrix3d.Displacement(new Vector3d(20, 0, 0)));
             return d2_solid;
         }
         protected override void BuildDetal6_vector(in Solid3d d6_solid, out Solid3d d6_solid2, double d6_rebro)

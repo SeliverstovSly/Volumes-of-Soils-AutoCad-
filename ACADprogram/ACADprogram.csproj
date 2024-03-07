@@ -111,6 +111,7 @@
     <Compile Include="AppData.cs" />
     <Compile Include="Beam.cs" />
     <Compile Include="Beam2.cs" />
+    <Compile Include="FoundationBlock.cs" />
     <Compile Include="Crossbar.cs" />
     <Compile Include="Opora.cs" />
     <Compile Include="Podgotovki.cs" />
@@ -194,8 +195,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\PropertyChanged.Fody.4.1.0\build\PropertyChanged.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PropertyChanged.Fody.4.1.0\build\PropertyChanged.Fody.props'))" />
     <Error Condition="!Exists('..\packages\CommunityToolkit.Mvvm.8.2.2\build\netstandard2.0\CommunityToolkit.Mvvm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CommunityToolkit.Mvvm.8.2.2\build\netstandard2.0\CommunityToolkit.Mvvm.targets'))" />
-    <Error Condition="!Exists('..\packages\Fody.6.6.4\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.6.6.4\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Fody.6.8.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.6.8.0\build\Fody.targets'))" />
   </Target>
   <Import Project="..\packages\CommunityToolkit.Mvvm.8.2.2\build\netstandard2.0\CommunityToolkit.Mvvm.targets" Condition="Exists('..\packages\CommunityToolkit.Mvvm.8.2.2\build\netstandard2.0\CommunityToolkit.Mvvm.targets')" />
-  <Import Project="..\packages\Fody.6.6.4\build\Fody.targets" Condition="Exists('..\packages\Fody.6.6.4\build\Fody.targets')" />
+  <Import Project="..\packages\Fody.6.8.0\build\Fody.targets" Condition="Exists('..\packages\Fody.6.8.0\build\Fody.targets')" />
 </Project>

@@ -65,6 +65,23 @@ namespace ACADprogram
             //Открытие пространство модели таблицы блоков для записи.
             using (var PdBlkRec = Ext.rec = PdTrans.GetObject(PdBlk[BlockTableRecord.ModelSpace], OpenMode.ForWrite) as BlockTableRecord)
             {
+                //Вектор изменения отметки положения цетнра опоры
+                //Исходные данные для отрезков(длина и координаты) 
+                //Глубина Котлована
+                var hk = Foundation.AllFoundations[Context.SelectedType1].Glubina_Zalozhenia + Context.HBetonPodgotovki + Context.HShebenPodgotovki;
+                var d = hk; //размер по Z
+                var j = Context.OtkosKotlovana;    //Уклон откосов котлована
+                var SR_otkos = Context.OtkosSrezki; //Уклон откосов срезки
+                var SN_otkos = Context.OtkosNasypi; //Уклон откосов насыпи
+                var SN_dop = Context.LdopNasypi;   //Запас к размеру длины и ширины основания насыпи
+                var d1 = Context.IGE1;    //Отметка первого (верхнего) слоя ИГЭ, мм
+                var d2 = Context.IGE2;    //Отметка второго слоя ИГЭ, мм
+                var d3 = Context.IGE3;    //Отметка третьего слоя ИГЭ, мм
+                var d4 = Context.IGE4;    //Отметка четвёптого слоя ИГЭ, мм
+                var d5 = Context.IGE5;    //Отметка пятого слоя ИГЭ, мм
+                var d6 = Context.IGE6;    //Отметка шестого слоя ИГЭ, мм
+                var h_ponizh = Context.OtmetkaPonizh; //Величина изменения отметки положения 3D фигур (понижение или повышения центра опоры)
+                var Vector_ponizh = new Vector3d(0, 0, h_ponizh);
                 //Определение размеров дна котлована взависимости от типа опоры и типа фундамента
 
                 double UgolProekc;
@@ -84,61 +101,51 @@ namespace ACADprogram
                     new double(),
                     new double()
                 };
-                int[] FQuantity = new int[] { Context.FoundationQuantity1, Context.FoundationQuantity2, Context.FoundationQuantity3, Context.FoundationQuantity4 };
                 FoundationType[] typei = new FoundationType[] { Context.SelectedType1, Context.SelectedType2, Context.SelectedType3, Context.SelectedType4 };
+                FoundationBlock[] Selectedblock = new FoundationBlock[] { Context.SelectedBlock1, Context.SelectedBlock2, Context.SelectedBlock3, Context.SelectedBlock4 };
                 B5n[] Beamtype = new B5n[] { Context.SelectedBeam1, Context.SelectedBeam2, Context.SelectedBeam3, Context.SelectedBeam4 };
+                B5n[] Beamtype2 = new B5n[] { Context.SelectedMainBeam1, Context.SelectedMainBeam1, Context.SelectedMainBeam1, Context.SelectedMainBeam1 };
                 for (int i = 0; i < typei.Length; i++)
                 {
                     var e = typei[i];
-                    var g = FQuantity[i];
-                    switch (g)
-                        {
-                            case 1:
-                            if (e == FoundationType.FS1n_A || e == FoundationType.FSP1n_A)
-                            {
-                                Foundation.AllFoundations[e].OverallSize = 4200;
-                                UgolProekc = 9.4623 * Math.PI / 180;
-                            }
-                            else if (e == FoundationType.FS2n_A || e == FoundationType.FSP2n_A)
-                            {
-                                Foundation.AllFoundations[e].OverallSize = 5200;
-                                UgolProekc = 15.0202 * Math.PI / 180;
-                            }
-                            else
-                            {
-                                UgolProekc = 0 * Math.PI / 180;
-                            }
-                            Lk_dopA[i] = Foundation.AllFoundations[e].a * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
-                            Lk_dopB[i] = Foundation.AllFoundations[e].OverallSize * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
+                    var g = Beamtype[i];
+                    var k = Beamtype2[i];
+                    var q = Selectedblock[i];
+                    if (e == FoundationType.FS1n_A || e == FoundationType.FSP1n_A)
+                    {
+                        Context.SelectedBlock1.Blockcreation(Context, e, Vector_ponizh, g, k).FullLength = 4200;
+                        //Foundation.AllFoundations[e].OverallSize = 4200;
+                        UgolProekc = 9.4623 * Math.PI / 180;
+                    }
+                    else if (e == FoundationType.FS2n_A || e == FoundationType.FSP2n_A)
+                    {
+                        Context.SelectedBlock1.Blockcreation(Context, e, Vector_ponizh, g, k).FullLength = 5200;
+                        //Foundation.AllFoundations[e].OverallSize = 5200;
+                        UgolProekc = 15.0202 * Math.PI / 180;
+                    }
+                    else
+                    {
+                        UgolProekc = 0 * Math.PI / 180;
+                    }
+                    var Lf = q.Blockcreation(Context, e, Vector_ponizh, g, k).Length;
+                    var FLf = q.Blockcreation(Context, e, Vector_ponizh, g, k).FullLength;
+                    var Eccentr = q.Blockcreation(Context, e, Vector_ponizh, g, k).Eccentricity;
+                    var Ugol = q.Blockcreation(Context, e, Vector_ponizh, g, k).AngleRotation;
+                    Lk_dopA[i] = Lf * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
+                    Lk_dopB[i] = FLf * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
 
-                            if (Foundation.AllFoundations[e].Ugol_povorota > 0)
-                            {
-                                Lk_dopA[i] = 0.5 * Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].a, 2) + Math.Pow(Foundation.AllFoundations[e].OverallSize, 2)) * Math.Cos(UgolProekc) + Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].e, 2) * 0.5) + Context.SvesaBetonPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.SvesaShebenPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.HShebenPodgotovki * 1 / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.DopRazmerNizhaKotlovana;
-                                Lk_dopB[i] = 0.5 * Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].a, 2) + Math.Pow(Foundation.AllFoundations[e].OverallSize, 2)) * Math.Cos(UgolProekc) + Math.Sqrt(Math.Pow(Foundation.AllFoundations[e].e, 2) * 0.5) + Context.SvesaBetonPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.SvesaShebenPod / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.HShebenPodgotovki * 1 / Math.Cos(Foundation.AllFoundations[e].Ugol_povorota * Math.PI / 180) + Context.DopRazmerNizhaKotlovana;
-                            }
-                            break;
-                            case 2: 
-                            var f = Beamtype[i];
-                            var L2foundation = (Foundation.AllFoundations[e].a * 0.5 + Foundation.AllFoundations[e].e) * 2 + f.LB;
-                            Lk_dopA[i] = L2foundation * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
-                            Lk_dopB[i] = Foundation.AllFoundations[e].OverallSize * 0.5 + Context.SvesaBetonPod + Context.SvesaShebenPod + Context.HShebenPodgotovki * 1 + Context.DopRazmerNizhaKotlovana;
-                            if (Foundation.AllFoundations[e].Ugol_povorota > 0)
-                            {
+                    if (Context.SelectedBlock1.Blockcreation(Context, e, Vector_ponizh, Context.SelectedBeam1, Context.SelectedMainBeam1).AngleRotation > 0)
+                    {
+                        Lk_dopA[i] = 0.5 * Math.Sqrt(Math.Pow(Lf, 2) + Math.Pow(FLf, 2)) * Math.Cos(UgolProekc) + Math.Sqrt(Math.Pow(Eccentr, 2) * 0.5) + Context.SvesaBetonPod / Math.Cos(Ugol * Math.PI / 180) + Context.SvesaShebenPod / Math.Cos(Ugol * Math.PI / 180) + Context.HShebenPodgotovki * 1 / Math.Cos(Ugol * Math.PI / 180) + Context.DopRazmerNizhaKotlovana;
+                        Lk_dopB[i] = 0.5 * Math.Sqrt(Math.Pow(Lf, 2) + Math.Pow(FLf, 2)) * Math.Cos(UgolProekc) + Math.Sqrt(Math.Pow(Eccentr, 2) * 0.5) + Context.SvesaBetonPod / Math.Cos(Ugol * Math.PI / 180) + Context.SvesaShebenPod / Math.Cos(Ugol * Math.PI / 180) + Context.HShebenPodgotovki * 1 / Math.Cos(Ugol * Math.PI / 180) + Context.DopRazmerNizhaKotlovana;
+                    }
 
-                            }
 
-                            break;
-
-                        }
-                    
                 }
-
                 var lk_ALeft0 = Math.Max(Lk_dopA[0], Lk_dopA[3]) + Opora.AllOpora[Context.SelectedType].Baza_A * 0.5;
                 var lk_ARight0 = Math.Max(Lk_dopA[1], Lk_dopA[2]) + Opora.AllOpora[Context.SelectedType].Baza_A * 0.5;
                 var lk_BUp0 = Math.Max(Lk_dopB[0], Lk_dopB[1]) + Opora.AllOpora[Context.SelectedType].Baza_B * 0.5;
                 var lk_BDown0 = Math.Max(Lk_dopB[2], Lk_dopB[3]) + Opora.AllOpora[Context.SelectedType].Baza_B * 0.5;
-                //Глубина Котлована
-                var hk = Foundation.AllFoundations[Context.SelectedType1].Glubina_Zalozhenia + Context.HBetonPodgotovki + Context.HShebenPodgotovki;
                 //Определение размеров дна котлована взависимости от типа опоры и типа фундамента
                 //Округление значения верха котлована с расчётом новоо значения низа котлована
                 var lk_Aleftk0 = RoundingSizePitWidth.RoundSize(lk_ALeft0, hk, Context.OtkosKotlovana, 100);
@@ -157,27 +164,10 @@ namespace ACADprogram
                 DBDictionary Style = (DBDictionary)PdTrans.GetObject(PdDb.VisualStyleDictionaryId, OpenMode.ForRead);
                 ModSpaceRec.VisualStyleId = Style.GetAt("Conceptual");
 
-                //Исходные данные для отрезков(длина и координаты) 
-                var d = hk; //размер по Z
-                var j = Context.OtkosKotlovana;    //Уклон откосов котлована
-                var SR_otkos = Context.OtkosSrezki; //Уклон откосов срезки
-                var SN_otkos = Context.OtkosNasypi; //Уклон откосов насыпи
-                var SN_dop = Context.LdopNasypi;   //Запас к размеру длины и ширины основания насыпи
-                var d1 = Context.IGE1;    //Отметка первого (верхнего) слоя ИГЭ, мм
-                var d2 = Context.IGE2;    //Отметка второго слоя ИГЭ, мм
-                var d3 = Context.IGE3;    //Отметка третьего слоя ИГЭ, мм
-                var d4 = Context.IGE4;    //Отметка четвёптого слоя ИГЭ, мм
-                var d5 = Context.IGE5;    //Отметка пятого слоя ИГЭ, мм
-                var d6 = Context.IGE6;    //Отметка шестого слоя ИГЭ, мм
-                var h_ponizh = Context.OtmetkaPonizh; //Величина изменения отметки положения 3D фигур (понижение или повышения центра опоры)
-
                 var h_leftA = Context.HReliefPoperekVLeft;  //Высота от поверхности котлована до рельефа
                 var h_rightA = Context.HReliefPoperekVRight;  //Высота от поверхности котлована до рельефа
                 var h_downB = Context.HReliefVdolVLDown;    //Высота от поверхности котлована до рельефа
                 var h_UpB = Context.HReliefVdolVLUp;    //Высота от поверхности котлована до рельефа
-
-                //Вектор изменения отметки положения цетнра опоры
-                var Vector_ponizh = new Vector3d(0, 0, h_ponizh);
 
                 var VerhKotleft = lk_ALeft + d * j;
                 var VerhKotRight = lk_ARight + d * j;
@@ -190,9 +180,7 @@ namespace ACADprogram
                 var h4 = h_downB * VerhKotDown / (Opora.AllOpora[Context.SelectedType].Baza_B * 0.5);
                 //MessageBox.Show($"{lk_ALeft}----{VerhKotleft}----{lk_ARight}----{VerhKotRight}----{lk_BUp}----{VerhKotUp}----{lk_BDown}----{VerhKotDown}----");
                 //return;
-
                 Point3d[] ptm;
-
                 // Раздел определения координат точек определяющих рельеф
                 //Расстояние от цетра котлована до точке 9-12
                 var lt09 = 0.5 * Math.Sqrt(Math.Pow(VerhKotleft, 2) + Math.Pow(VerhKotUp, 2));
@@ -512,8 +500,8 @@ namespace ACADprogram
 
                 //ФУНДАМЕНТЫ. ТИП 1
                 {
-                    Solid3d Fund_Type1i = FoundationBuild.Build(Context.SelectedType1, Vector_ponizh);
-                    Fund_Type1i.TransformBy(Matrix3d.Rotation((-Foundation.AllFoundations[Context.SelectedType1].Ugol_povorota * Math.PI / 180), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
+                    Solid3d Fund_Type1i = Context.SelectedBlock1.Blockcreation(Context, Context.SelectedType1, Vector_ponizh, Context.SelectedBeam1, Context.SelectedMainBeam1).Solid;
+                    Fund_Type1i.TransformBy(Matrix3d.Rotation((-Context.SelectedBlock1.Blockcreation(Context, Context.SelectedType1, Vector_ponizh, Context.SelectedBeam1, Context.SelectedMainBeam1).AngleRotation * Math.PI / 180), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
 
 
                     //var ggg=new Point3d(0, 0, 0);
@@ -532,29 +520,29 @@ namespace ACADprogram
                 }
                 //ФУНДАМЕНТЫ. ТИП 1
                 //ФУНДАМЕНТЫ. ТИП 2
-                Solid3d Fund_Type2i = FoundationBuild.Build(Context.SelectedType2, Vector_ponizh);
-                Fund_Type2i.TransformBy(Matrix3d.Rotation((Math.PI + (Foundation.AllFoundations[Context.SelectedType2].Ugol_povorota * Math.PI / 180)), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
+                Solid3d Fund_Type2i = Context.SelectedBlock2.Blockcreation(Context, Context.SelectedType2, Vector_ponizh, Context.SelectedBeam2, Context.SelectedMainBeam2).Solid;
+                Fund_Type2i.TransformBy(Matrix3d.Rotation((Math.PI + (Context.SelectedBlock2.Blockcreation(Context, Context.SelectedType2, Vector_ponizh, Context.SelectedBeam2, Context.SelectedMainBeam2).AngleRotation * Math.PI / 180)), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
                 Fund_Type2i.TransformBy(Matrix3d.Displacement(PtType2));
                 Fund_Type2i.ToBD();
                 //ФУНДАМЕНТЫ. ТИП 2
                 //ФУНДАМЕНТЫ. ТИП 3
                 var UgP = new double();
-                if (Foundation.AllFoundations[Context.SelectedType3].Ugol_povorota == 0)
+                if (Context.SelectedBlock3.Blockcreation(Context, Context.SelectedType3, Vector_ponizh, Context.SelectedBeam3, Context.SelectedMainBeam3).AngleRotation == 0)
                 {
                     UgP = 0 * Math.PI / 180;
                 }
                 else
                 {
-                    UgP = Math.PI * 0.5 + (Foundation.AllFoundations[Context.SelectedType3].Ugol_povorota * Math.PI / 180);
+                    UgP = Math.PI * 0.5 + (Context.SelectedBlock3.Blockcreation(Context, Context.SelectedType3, Vector_ponizh, Context.SelectedBeam3, Context.SelectedMainBeam3).AngleRotation * Math.PI / 180);
                 }
-                Solid3d Fund_Type3i = FoundationBuild.Build(Context.SelectedType3, Vector_ponizh);
+                Solid3d Fund_Type3i = Context.SelectedBlock3.Blockcreation(Context, Context.SelectedType3, Vector_ponizh, Context.SelectedBeam3, Context.SelectedMainBeam3).Solid;
                 Fund_Type3i.TransformBy(Matrix3d.Rotation(UgP, new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
                 Fund_Type3i.TransformBy(Matrix3d.Displacement(PtType3));
                 Fund_Type3i.ToBD();
                 //ФУНДАМЕНТЫ. ТИП 3
                 //ФУНДАМЕНТЫ. ТИП 4
-                Solid3d Fund_Type4i = FoundationBuild.Build(Context.SelectedType4, Vector_ponizh);
-                Fund_Type4i.TransformBy(Matrix3d.Rotation((Foundation.AllFoundations[Context.SelectedType4].Ugol_povorota * Math.PI / 180), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
+                Solid3d Fund_Type4i = Context.SelectedBlock4.Blockcreation(Context, Context.SelectedType4, Vector_ponizh, Context.SelectedBeam4, Context.SelectedMainBeam4).Solid;
+                Fund_Type4i.TransformBy(Matrix3d.Rotation((Context.SelectedBlock4.Blockcreation(Context, Context.SelectedType4, Vector_ponizh, Context.SelectedBeam4, Context.SelectedMainBeam4).AngleRotation * Math.PI / 180), new Vector3d(0, 0, 1), new Point3d(0, 0, 0)));
                 Fund_Type4i.TransformBy(Matrix3d.Displacement(PtType4));
                 Fund_Type4i.ToBD();
                 //ФУНДАМЕНТЫ. ТИП 4
@@ -695,12 +683,7 @@ namespace ACADprogram
                         Crossbar3DType4.TransformBy(Matrix3d.Displacement(Pt_SPF4));
                     }
                 }
-                //Ригель в модели
-                //var ffff = new NextBeam();
-                //if (ffff.BuildBeam(Context, out var B2n, out Solid3d Hole_d1,out Vector3d[] pt_holed1, out Vector3d[] pt_hole2, out Solid3d B1n_d4, out Solid3d B1n_d5, out Solid3d B1n_d6))
-                //{
-                //    B2n.ToBD();
-                //}
+                
 
                 ////Управление Балками в модели
                 //Solid3d B1 = new Solid3d();
@@ -710,8 +693,9 @@ namespace ACADprogram
                 //var Hb1 = h_Fi + Foundation.AllFoundations[Context.SelectedType1].hf;
                 //B1.TransformBy(Matrix3d.Displacement(new Vector3d(-AOp2+197.9899, BOp2-197.9899, Hb1)));
 
-
-
+                
+                //var Block1 = Context.SelectedBlock1.Blockcreation(Context, Context.SelectedType1, Vector_ponizh, Context.SelectedBeam1, Context.SelectedMainBeam1).Solid;
+                //Block1.ToBD();
                 //Сохранение объекта в базе данных
                 PdTrans.Commit();
             }
